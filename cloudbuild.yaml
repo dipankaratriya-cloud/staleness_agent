@@ -1,0 +1,63 @@
+steps:
+  # Step 0: Pull previous image for layer caching (ok if it fails on first run)
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        docker pull us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/dipankara-netizen-staleness_agent/staleness-agent-git:latest || exit 0
+
+  # Step 1: Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--cache-from'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/dipankara-netizen-staleness_agent/staleness-agent-git:latest'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/dipankara-netizen-staleness_agent/staleness-agent-git:$COMMIT_SHA'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/dipankara-netizen-staleness_agent/staleness-agent-git:latest'
+      - '.'
+
+  # Step 2: Push the image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '--all-tags'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/dipankara-netizen-staleness_agent/staleness-agent-git'
+
+  # Step 3: Deploy as a Cloud Run JOB (not a Service — no port needed)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud run jobs update staleness-pipeline \
+          --image "us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/dipankara-netizen-staleness_agent/staleness-agent-git:$COMMIT_SHA" \
+          --region us-central1 \
+          --memory 8Gi \
+          --cpu 4 \
+          --task-timeout 86400 \
+          --max-retries 1 \
+          --service-account staleness-runner@$PROJECT_ID.iam.gserviceaccount.com \
+          --set-env-vars "GCP_PROJECT=$PROJECT_ID,BQ_DATASET=staleness,WORKERS=4,INPUT_FILE=Provenance.csv" \
+          --set-secrets "GEMINI_API_KEY=staleness-gemini-api-key:latest,GITHUB_TOKEN=github-token:latest,GROQ_API_KEY=groq-api-key:latest" \
+        2>/dev/null || \
+        gcloud run jobs create staleness-pipeline \
+          --image "us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/dipankara-netizen-staleness_agent/staleness-agent-git:$COMMIT_SHA" \
+          --region us-central1 \
+          --memory 8Gi \
+          --cpu 4 \
+          --task-timeout 86400 \
+          --max-retries 1 \
+          --service-account staleness-runner@$PROJECT_ID.iam.gserviceaccount.com \
+          --set-env-vars "GCP_PROJECT=$PROJECT_ID,BQ_DATASET=staleness,WORKERS=4,INPUT_FILE=Provenance.csv" \
+          --set-secrets "GEMINI_API_KEY=staleness-gemini-api-key:latest,GITHUB_TOKEN=github-token:latest,GROQ_API_KEY=groq-api-key:latest"
+
+# Store both tags in Artifact Registry
+images:
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/dipankara-netizen-staleness_agent/staleness-agent-git:$COMMIT_SHA'
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/dipankara-netizen-staleness_agent/staleness-agent-git:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY

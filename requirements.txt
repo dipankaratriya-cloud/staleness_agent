@@ -11,8 +11,8 @@ google-cloud-bigquery
 google-cloud-storage
 
 # Existing deps
-dataclasses
-datacommons
+# dataclasses  ← built into Python 3.7+, no install needed
+# datacommons  ← all PyPI versions yanked, not imported in pipeline
 earthengine-api
 geojson
 geopy
@@ -24,3 +24,4 @@ retry
 s2sphere
 shapely
 urllib3
+pandas

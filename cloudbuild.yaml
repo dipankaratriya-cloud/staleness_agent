@@ -39,7 +39,6 @@ steps:
           --cpu 4 \
           --task-timeout 86400 \
           --max-retries 1 \
-          --service-account staleness-runner@$PROJECT_ID.iam.gserviceaccount.com \
           --set-env-vars "GCP_PROJECT=$PROJECT_ID,BQ_DATASET=staleness,WORKERS=4,INPUT_FILE=Provenance.csv" \
           --set-secrets "GEMINI_API_KEY=staleness-gemini-api-key:latest,GITHUB_TOKEN=github-token:latest,GROQ_API_KEY=groq-api-key:latest" \
         2>/dev/null || \
@@ -50,7 +49,6 @@ steps:
           --cpu 4 \
           --task-timeout 86400 \
           --max-retries 1 \
-          --service-account staleness-runner@$PROJECT_ID.iam.gserviceaccount.com \
           --set-env-vars "GCP_PROJECT=$PROJECT_ID,BQ_DATASET=staleness,WORKERS=4,INPUT_FILE=Provenance.csv" \
           --set-secrets "GEMINI_API_KEY=staleness-gemini-api-key:latest,GITHUB_TOKEN=github-token:latest,GROQ_API_KEY=groq-api-key:latest"
 

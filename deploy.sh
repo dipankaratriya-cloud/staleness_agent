@@ -53,7 +53,7 @@ gcloud run jobs create "$JOB" \
   --task-timeout 86400 \
   --max-retries 1 \
   --set-env-vars "GCS_BUCKET=${BUCKET},GCP_PROJECT=${PROJECT},BQ_DATASET=${BQ_DATASET}" \
-  --set-secrets "GITHUB_TOKEN=dipankara-github-token:latest,GROQ_API_KEY=dipankara-groq-api-key:latest,GEMINI_API_KEY=dipankara-gemini-api-key:latest" \
+  --set-secrets "GITHUB_TOKEN=github-token:latest,GROQ_API_KEY=groq-api-key:latest,GEMINI_API_KEY=staleness-gemini-api-key:latest" \
   2>/dev/null || \
 gcloud run jobs update "$JOB" \
   --image "$IMAGE" \
@@ -61,7 +61,7 @@ gcloud run jobs update "$JOB" \
   --memory 8Gi \
   --cpu 4 \
   --set-env-vars "GCS_BUCKET=${BUCKET},GCP_PROJECT=${PROJECT},BQ_DATASET=${BQ_DATASET}" \
-  --set-secrets "GITHUB_TOKEN=dipankara-github-token:latest,GROQ_API_KEY=dipankara-groq-api-key:latest,GEMINI_API_KEY=dipankara-gemini-api-key:latest"
+  --set-secrets "GITHUB_TOKEN=github-token:latest,GROQ_API_KEY=groq-api-key:latest,GEMINI_API_KEY=staleness-gemini-api-key:latest"
 
 # ── Deploy Cloud Workflow ─────────────────────────────────────────────────────
 echo "▶ Deploying Cloud Workflow"

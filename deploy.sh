@@ -3,7 +3,7 @@
 # Usage: bash deploy.sh
 set -euo pipefail
 
-PROJECT="your-gcp-project"          # ← change this
+PROJECT="datcom-infosys-dev"
 REGION="us-central1"
 BUCKET="staleness-pipeline-${PROJECT}"
 BQ_DATASET="staleness"

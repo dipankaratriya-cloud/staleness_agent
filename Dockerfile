@@ -7,12 +7,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl wget git ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# ── Install pi CLI ─────────────────────────────────────────────────────────────
-# Replace this with however your pi CLI is distributed:
-#   npm:    RUN npm install -g @your-org/pi-cli
-#   binary: COPY bin/pi /usr/local/bin/pi && chmod +x /usr/local/bin/pi
-COPY bin/pi /usr/local/bin/pi
-RUN chmod +x /usr/local/bin/pi
+# ── Install pi CLI (AI coding agent — @earendil-works/pi-coding-agent) ─────────
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/*
+RUN npm install -g @earendil-works/pi-coding-agent
 
 # ── Python deps ────────────────────────────────────────────────────────────────
 COPY requirements.txt .

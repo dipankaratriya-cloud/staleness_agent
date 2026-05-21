@@ -25,10 +25,12 @@ env/
 *.hdf5
 *.h5
 
-# Specific large data files
+# Specific large data files (exclude these huge raw files)
 EPA_AirQuality.csv
 covid_mobility.csv
-Provenance.csv
+
+# Provenance.csv is intentionally tracked — Dockerfile needs it
+!Provenance.csv
 
 # Dataset directories
 datasets/

@@ -1,0 +1,61 @@
+# Cloud Workflows definition — triggers the staleness pipeline Cloud Run Job
+# Deploy:  gcloud workflows deploy staleness-workflow --source=workflow.yaml --location=us-central1
+# Trigger: gcloud workflows run staleness-workflow --location=us-central1
+
+main:
+  params: [args]
+  steps:
+
+    - init:
+        assign:
+          - project:   ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+          - region:    "us-central1"
+          - job_name:  "staleness-pipeline"
+
+    - run_job:
+        call: http.post
+        args:
+          url: ${"https://" + region + "-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/" + project + "/jobs/" + job_name + ":run"}
+          auth:
+            type: OAuth2
+          body:
+            overrides:
+              containerOverrides:
+                - env:
+                    - name: RESUME
+                      value: "false"
+        result: job_response
+
+    - extract_execution:
+        assign:
+          - execution_name: ${job_response.body.metadata.name}
+
+    - poll_loop:
+        steps:
+          - wait:
+              call: sys.sleep
+              args:
+                seconds: 60
+          - check_status:
+              call: http.get
+              args:
+                url: ${"https://" + region + "-run.googleapis.com/apis/run.googleapis.com/v1/" + execution_name}
+                auth:
+                  type: OAuth2
+              result: status_response
+          - evaluate:
+              switch:
+                - condition: ${status_response.body.status.completionTime != null and status_response.body.status.succeededCount > 0}
+                  next: succeeded
+                - condition: ${status_response.body.status.completionTime != null and status_response.body.status.failedCount > 0}
+                  next: failed
+                - condition: true
+                  next: poll_loop
+
+    - succeeded:
+        return: "Pipeline completed successfully"
+
+    - failed:
+        raise:
+          code: 500
+          message: "Pipeline job failed — check Cloud Run logs"

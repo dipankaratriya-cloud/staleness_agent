@@ -1,0 +1,26 @@
+# Core pipeline
+python-dotenv
+requests
+playwright
+openpyxl
+pyarrow
+groq
+
+# GCP
+google-cloud-bigquery
+google-cloud-storage
+
+# Existing deps
+dataclasses
+datacommons
+earthengine-api
+geojson
+geopy
+google-cloud-logging
+lxml
+rasterio
+requests_cache
+retry
+s2sphere
+shapely
+urllib3

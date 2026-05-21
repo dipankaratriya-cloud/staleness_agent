@@ -1,0 +1,121 @@
+# Environment & secrets
+.env
+*.env
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+env/
+
+# Large dataset files (CSV, Parquet, DB)
+*.csv
+*.parquet
+*.db
+*.sqlite
+*.hdf5
+*.h5
+
+# Specific large data files
+EPA_AirQuality.csv
+covid_mobility.csv
+Provenance.csv
+
+# Dataset directories
+datasets/
+data/
+
+# Scraped / crawled website data folders
+Agent/
+aqs_epa_gov_aqsweb_airdata_download_files_html/
+cde_ucr_cjis_gov_latest_webapp/
+censusindia_gov_in/
+civilrightsdata_ed_gov_data/
+cumulis_epa_gov_supercpad_siteprofiles_index_cfm/
+data_nifc_opendata_arcgis_com/
+data_nifc_opendata_arcgis_com_maps_wfigs_wildland_fire_perim/
+datacommons_org/
+developers_google_com_earth_engine_datasets_catalog_google_d/
+ec_europa_eu_eurostat_databrowser_view_demo_r_find3_default_/
+ec_europa_eu_eurostat_databrowser_view_nama_10r_3empers_defa/
+ec_europa_eu_eurostat_databrowser_view_nama_10r_3gdp_default/
+ec_europa_eu_eurostat_databrowser_view_trng_lfse_04_default_/
+ec_europa_eu_eurostat_web_health_database/
+ec_europa_eu_eurostat_web_main_data_database/
+edg_epa_gov_metadata_catalog_search_resource_details_page/
+fam_nwcg_gov_fam_web/
+google_covid/
+ocrdata_ed_gov/
+ocrdata_ed_gov_data/
+sidra_ibge_gov_br_home_pnadct/
+terrabrasilis_dpi_inpe_br_queimadas_situacao_atual_estatisti/
+test_sidra/
+www_1212_mn_en_statcate/
+www_eia_gov_electricity_data_eia860/
+www_epa_gov_air_emissions_inventories_air_pollutant_emission/
+www_epa_gov_air_emissions_inventories_national_emissions_inv/
+www_epa_gov_enviro_greenhouse_gas_overview/
+www_epa_gov_ghgreporting/
+www_epa_gov_superfund_superfund_data_and_reports/
+www_fbi_gov_services_cjis_ucr_hate_crime/
+www_fema_gov_openfema_data_page_fima_nfip_redacted_claims_v2/
+www_google_com/
+www_google_com_covid19_mobility/
+www_health_ny_gov_statistics_prevention_injury_prevention_in/
+www_mtbs_gov/
+www_ncdc_noaa_gov/
+www_noaa_gov_weather/
+www_rff_org_publications_data_tools/
+www_stanfordecholab_com_wildfire_smoke/
+www_tn_gov_health_health_program_areas_statistics_health_dat/
+
+# Dataset category folders
+alcohol_consumption/
+bmi/
+fruits_vegetables/
+physical_activity/
+social_environment/
+tobacco_consumption/
+undata/
+
+# Input/output data directories
+input/
+input_file/
+input_files/
+results/
+temp_data_repo/
+temp_fema_data/
+
+# Logs
+logs/
+
+# Generated output files
+all_folders.txt
+phase1_results.json
+phase23_results.json
+phase1_top50.json
+
+# Screenshots & web artifacts
+*.png
+*.html
+screenshot.png
+code_editor.html
+code_editor.png
+error.html
+page.html
+
+# Claude internal files
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -17,9 +17,10 @@ import json
 import os
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, date, timezone
 
 import bq
+import gcs
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -38,6 +39,103 @@ def load_json(path):
         with open(path) as f:
             return json.load(f)
     return {}
+
+
+def count_rows(filepath: str) -> int | None:
+    """Count rows in a CSV/TSV/Excel file. Returns None if not countable."""
+    if not filepath or not os.path.exists(filepath):
+        return None
+    ext = os.path.splitext(filepath)[1].lower()
+    try:
+        import pandas as pd
+        if ext in (".csv", ".tsv", ".gz"):
+            sep = "\t" if ext == ".tsv" else ","
+            df = pd.read_csv(filepath, sep=sep, nrows=None, low_memory=False)
+            return len(df)
+        elif ext in (".xlsx", ".xls"):
+            df = pd.read_excel(filepath, nrows=None)
+            return len(df)
+        elif ext == ".parquet":
+            df = pd.read_parquet(filepath)
+            return len(df)
+    except Exception:
+        pass
+    return None
+
+
+def parse_date_to_days(date_str: str | None) -> int | None:
+    """Convert a date string (YYYY or YYYY-MM or YYYY-MM-DD) to days since epoch."""
+    if not date_str or date_str == "not_possible":
+        return None
+    try:
+        from datetime import date as dt
+        s = str(date_str).strip()
+        if len(s) == 4:
+            d = dt(int(s), 12, 31)
+        elif len(s) == 7:
+            import calendar
+            y, m = int(s[:4]), int(s[5:7])
+            last_day = calendar.monthrange(y, m)[1]
+            d = dt(y, m, last_day)
+        else:
+            d = dt.fromisoformat(s[:10])
+        return (d - dt(1970, 1, 1)).days
+    except Exception:
+        return None
+
+
+def compute_delta(run_id: str, phase23: dict, phase4: dict,
+                  prev_phase4: dict | None) -> list[dict]:
+    """Compute delta metrics for every successfully processed dataset."""
+    today = date.today()
+    today_days = (today - date(1970, 1, 1)).days
+    rows = []
+
+    for dataset_id, p4 in phase4.items():
+        if p4.get("last_obs_date") in (None, "not_possible"):
+            continue
+
+        p23 = phase23.get(dataset_id, {})
+        filepath  = p23.get("file")
+        file_size = os.path.getsize(filepath) if filepath and os.path.exists(filepath) else None
+        row_count_current = count_rows(filepath)
+
+        # Previous run data
+        prev = (prev_phase4 or {}).get(dataset_id, {})
+        prev_date_str = prev.get("last_obs_date")
+        prev_row_count = prev.get("row_count_current")  # stored from last run
+
+        # Date delta
+        curr_days = parse_date_to_days(p4.get("last_obs_date"))
+        prev_days = parse_date_to_days(prev_date_str)
+        date_delta = (curr_days - prev_days) if (curr_days and prev_days) else None
+
+        # Freshness = days from last observation date to today
+        freshness = (today_days - curr_days) if curr_days else None
+
+        # Row delta
+        row_additions = None
+        row_deletions = None
+        if row_count_current is not None and prev_row_count is not None:
+            diff = row_count_current - prev_row_count
+            row_additions = max(0, diff)
+            row_deletions = max(0, -diff)
+
+        rows.append({
+            "dataset_id":          dataset_id,
+            "source_url":          p4.get("source_url", p23.get("url", "")),
+            "last_obs_date":       p4.get("last_obs_date"),
+            "prev_last_obs_date":  prev_date_str,
+            "date_delta_days":     date_delta,
+            "data_freshness_days": freshness,
+            "row_count_current":   row_count_current,
+            "row_count_previous":  prev_row_count,
+            "row_additions":       row_additions,
+            "row_deletions":       row_deletions,
+            "file_size_bytes":     file_size,
+        })
+
+    return rows
 
 
 def latest_phase4_file():
@@ -84,11 +182,24 @@ def main():
         cmd.append("--resume")
     run_phase("Phase 2+3 — dataset download", cmd)
 
+    # ── Enrich phase23 with file size + row count, upload files to GCS ───────
+    phase23_data = load_json(os.path.join(BASE_DIR, "phase23_results.json"))
+    print(f"\n[pipeline] enriching Phase 2+3 with file sizes and row counts...")
+    for dataset_id, entry in phase23_data.items():
+        if entry.get("status") != "success":
+            continue
+        fp = entry.get("file")
+        if fp and os.path.exists(fp):
+            entry["file_size_bytes"] = os.path.getsize(fp)
+            entry["row_count"] = count_rows(fp)
+            # Upload dataset file to GCS for future delta comparisons
+            try:
+                gcs.upload_dataset_file(dataset_id, run_id, fp)
+            except Exception as e:
+                print(f"  [gcs] upload skipped for {dataset_id}: {e}")
+
     print(f"\n[pipeline] pushing Phase 2+3 results to BigQuery...")
-    bq.write_phase23(
-        run_id  = run_id,
-        phase23 = load_json(os.path.join(BASE_DIR, "phase23_results.json")),
-    )
+    bq.write_phase23(run_id=run_id, phase23=phase23_data)
     print(f"[pipeline] ✓ Phase 2+3 → BigQuery done")
 
     # ── Phase 4 ───────────────────────────────────────────────────────────────
@@ -97,15 +208,38 @@ def main():
         cmd.append("--resume")
     run_phase("Phase 4 — observation date extraction", cmd)
 
+    phase4_data = load_json(latest_phase4_file())
+
     print(f"\n[pipeline] pushing Phase 4 results to BigQuery...")
-    bq.write_phase4(
-        run_id = run_id,
-        phase4 = load_json(latest_phase4_file()),
-    )
+    bq.write_phase4(run_id=run_id, phase4=phase4_data)
     print(f"[pipeline] ✓ Phase 4 → BigQuery done")
 
+    # ── Fetch previous run from GCS and compute delta metrics ─────────────────
+    print(f"\n[pipeline] computing delta metrics vs previous run...")
+    try:
+        prev_phase4 = gcs.get_previous_run_results(run_id)
+    except Exception as e:
+        print(f"  [gcs] could not fetch previous run (first run?): {e}")
+        prev_phase4 = None
+
+    delta_rows = compute_delta(run_id, phase23_data, phase4_data, prev_phase4)
+    print(f"[pipeline] computed delta for {len(delta_rows)} datasets")
+    bq.write_delta(run_id=run_id, delta=delta_rows)
+    print(f"[pipeline] ✓ delta_results → BigQuery done")
+
+    # ── Upload run artifacts to GCS for future reference ──────────────────────
+    try:
+        gcs.upload_run_artifacts(run_id, BASE_DIR)
+        print(f"[pipeline] ✓ run artifacts uploaded to GCS")
+    except Exception as e:
+        print(f"  [gcs] artifact upload skipped: {e}")
+
     print(f"\n[pipeline] ✅ complete — run_id: {run_id}")
-    print(f"  BigQuery: {bq.PROJECT}.{bq.DATASET}.[phase1|phase23|phase4]_results")
+    print(f"  BigQuery tables:")
+    print(f"    {bq.PROJECT}.{bq.DATASET}.phase1_results")
+    print(f"    {bq.PROJECT}.{bq.DATASET}.phase23_results  (with file_size + row_count)")
+    print(f"    {bq.PROJECT}.{bq.DATASET}.phase4_results")
+    print(f"    {bq.PROJECT}.{bq.DATASET}.delta_results    (staleness + additions/deletions)")
 
 
 if __name__ == "__main__":

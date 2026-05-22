@@ -28,7 +28,7 @@ def ensure_tables():
 
     tables = {
         "phase1_results": [
-            bigquery.SchemaField("run_id",          "STRING"),
+            bigquery.SchemaField("run_id",           "STRING"),
             bigquery.SchemaField("run_date",         "DATE"),
             bigquery.SchemaField("dataset_id",       "STRING"),
             bigquery.SchemaField("url",              "STRING"),
@@ -45,6 +45,8 @@ def ensure_tables():
             bigquery.SchemaField("failure_code",     "STRING"),
             bigquery.SchemaField("file",             "STRING"),
             bigquery.SchemaField("rounds_taken",     "INT64"),
+            bigquery.SchemaField("file_size_bytes",  "INT64"),
+            bigquery.SchemaField("row_count",        "INT64"),
         ],
         "phase4_results": [
             bigquery.SchemaField("run_id",           "STRING"),
@@ -54,6 +56,24 @@ def ensure_tables():
             bigquery.SchemaField("last_obs_date",    "STRING"),
             bigquery.SchemaField("column_used",      "STRING"),
             bigquery.SchemaField("files_checked",    "INT64"),
+        ],
+        # ── Delta / staleness report ──────────────────────────────────────────
+        "delta_results": [
+            bigquery.SchemaField("run_id",              "STRING"),
+            bigquery.SchemaField("run_date",            "DATE"),
+            bigquery.SchemaField("dataset_id",          "STRING"),
+            bigquery.SchemaField("source_url",          "STRING"),
+            # Date metrics
+            bigquery.SchemaField("last_obs_date",       "STRING"),
+            bigquery.SchemaField("prev_last_obs_date",  "STRING"),
+            bigquery.SchemaField("date_delta_days",     "INT64"),   # positive = data got newer
+            bigquery.SchemaField("data_freshness_days", "INT64"),   # days from last_obs_date to today
+            # Row / file metrics
+            bigquery.SchemaField("row_count_current",   "INT64"),
+            bigquery.SchemaField("row_count_previous",  "INT64"),
+            bigquery.SchemaField("row_additions",       "INT64"),   # current - previous (if positive)
+            bigquery.SchemaField("row_deletions",       "INT64"),   # previous - current (if positive)
+            bigquery.SchemaField("file_size_bytes",     "INT64"),
         ],
     }
 
@@ -97,14 +117,16 @@ def write_phase23(run_id: str, phase23: dict):
     today = str(date.today())
     _insert("phase23_results", [
         {
-            "run_id":       run_id,
-            "run_date":     today,
-            "dataset_id":   v.get("dataset_id", k),
-            "url":          v.get("url", ""),
-            "status":       v.get("status", ""),
-            "failure_code": v.get("failure_code"),
-            "file":         str(v.get("file") or ""),
-            "rounds_taken": v.get("rounds_taken"),
+            "run_id":           run_id,
+            "run_date":         today,
+            "dataset_id":       v.get("dataset_id", k),
+            "url":              v.get("url", ""),
+            "status":           v.get("status", ""),
+            "failure_code":     v.get("failure_code"),
+            "file":             str(v.get("file") or ""),
+            "rounds_taken":     v.get("rounds_taken"),
+            "file_size_bytes":  v.get("file_size_bytes"),
+            "row_count":        v.get("row_count"),
         }
         for k, v in phase23.items()
     ])
@@ -124,6 +146,31 @@ def write_phase4(run_id: str, phase4: dict):
             "files_checked": v.get("files_checked"),
         }
         for k, v in phase4.items()
+    ])
+
+
+def write_delta(run_id: str, delta: list[dict]):
+    """Push delta/staleness metrics to BigQuery after Phase 4 completes."""
+    if not delta:
+        return
+    today = str(date.today())
+    _insert("delta_results", [
+        {
+            "run_id":               run_id,
+            "run_date":             today,
+            "dataset_id":           row.get("dataset_id", ""),
+            "source_url":           row.get("source_url", ""),
+            "last_obs_date":        row.get("last_obs_date"),
+            "prev_last_obs_date":   row.get("prev_last_obs_date"),
+            "date_delta_days":      row.get("date_delta_days"),
+            "data_freshness_days":  row.get("data_freshness_days"),
+            "row_count_current":    row.get("row_count_current"),
+            "row_count_previous":   row.get("row_count_previous"),
+            "row_additions":        row.get("row_additions"),
+            "row_deletions":        row.get("row_deletions"),
+            "file_size_bytes":      row.get("file_size_bytes"),
+        }
+        for row in delta
     ])
 
 

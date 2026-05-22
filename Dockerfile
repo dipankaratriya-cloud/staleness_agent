@@ -21,5 +21,7 @@ RUN playwright install chromium --with-deps
 # ── Source ─────────────────────────────────────────────────────────────────────
 COPY *.py ./
 COPY Provenance.csv ./
+COPY Provenance_clean.csv ./
+COPY Provenance_high.csv ./
 
 CMD ["python3", "pipeline_cloudrun.py"]

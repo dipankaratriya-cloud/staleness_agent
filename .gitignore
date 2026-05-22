@@ -29,8 +29,10 @@ env/
 EPA_AirQuality.csv
 covid_mobility.csv
 
-# Provenance.csv is intentionally tracked — Dockerfile needs it
+# These are intentionally tracked — Dockerfile needs them
 !Provenance.csv
+!Provenance_clean.csv
+!Provenance_high.csv
 
 # Dataset directories
 datasets/

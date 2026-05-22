@@ -75,22 +75,26 @@ def _insert(table_name, rows):
         print(f"  [bq] ✓ {len(rows)} rows → {table_name}")
 
 
-def write_all(run_id: str, phase1: dict, phase23: dict, phase4: dict):
+def write_phase1(run_id: str, phase1: dict):
+    """Push Phase 1 results to BigQuery immediately after Phase 1 completes."""
     today = str(date.today())
-
     _insert("phase1_results", [
         {
-            "run_id":        run_id,
-            "run_date":      today,
-            "dataset_id":    v.get("dataset_id", k),
-            "url":           v.get("url", ""),
-            "matched_folder":v.get("matched_folder", ""),
-            "confidence":    v.get("confidence", ""),
-            "dataset_name":  v.get("dataset_name", ""),
+            "run_id":         run_id,
+            "run_date":       today,
+            "dataset_id":     v.get("dataset_id", k),
+            "url":            v.get("url", ""),
+            "matched_folder": v.get("matched_folder", ""),
+            "confidence":     v.get("confidence", ""),
+            "dataset_name":   v.get("dataset_name", ""),
         }
         for k, v in phase1.items()
     ])
 
+
+def write_phase23(run_id: str, phase23: dict):
+    """Push Phase 2+3 results to BigQuery immediately after Phase 2+3 completes."""
+    today = str(date.today())
     _insert("phase23_results", [
         {
             "run_id":       run_id,
@@ -105,6 +109,10 @@ def write_all(run_id: str, phase1: dict, phase23: dict, phase4: dict):
         for k, v in phase23.items()
     ])
 
+
+def write_phase4(run_id: str, phase4: dict):
+    """Push Phase 4 results to BigQuery immediately after Phase 4 completes."""
+    today = str(date.today())
     _insert("phase4_results", [
         {
             "run_id":        run_id,
@@ -117,3 +125,10 @@ def write_all(run_id: str, phase1: dict, phase23: dict, phase4: dict):
         }
         for k, v in phase4.items()
     ])
+
+
+def write_all(run_id: str, phase1: dict, phase23: dict, phase4: dict):
+    """Push all phases at once (kept for backward compatibility)."""
+    write_phase1(run_id, phase1)
+    write_phase23(run_id, phase23)
+    write_phase4(run_id, phase4)

@@ -71,11 +71,25 @@ def main():
         cmd.append("--resume")
     run_phase("Phase 1 — URL → repo match", cmd)
 
+    print(f"\n[pipeline] pushing Phase 1 results to BigQuery...")
+    bq.write_phase1(
+        run_id = run_id,
+        phase1 = load_json(os.path.join(BASE_DIR, "phase1_results.json")),
+    )
+    print(f"[pipeline] ✓ Phase 1 → BigQuery done")
+
     # ── Phase 2+3 ─────────────────────────────────────────────────────────────
     cmd = ["python3", "run_phase23.py", "phase1_results.json", "--workers", workers]
     if resume:
         cmd.append("--resume")
     run_phase("Phase 2+3 — dataset download", cmd)
+
+    print(f"\n[pipeline] pushing Phase 2+3 results to BigQuery...")
+    bq.write_phase23(
+        run_id  = run_id,
+        phase23 = load_json(os.path.join(BASE_DIR, "phase23_results.json")),
+    )
+    print(f"[pipeline] ✓ Phase 2+3 → BigQuery done")
 
     # ── Phase 4 ───────────────────────────────────────────────────────────────
     cmd = ["python3", "run_phase4.py", "--workers", workers]
@@ -83,14 +97,12 @@ def main():
         cmd.append("--resume")
     run_phase("Phase 4 — observation date extraction", cmd)
 
-    # ── Push all results to BigQuery ──────────────────────────────────────────
-    print(f"\n[pipeline] pushing results to BigQuery (run_id={run_id})...")
-    bq.write_all(
-        run_id  = run_id,
-        phase1  = load_json(os.path.join(BASE_DIR, "phase1_results.json")),
-        phase23 = load_json(os.path.join(BASE_DIR, "phase23_results.json")),
-        phase4  = load_json(latest_phase4_file()),
+    print(f"\n[pipeline] pushing Phase 4 results to BigQuery...")
+    bq.write_phase4(
+        run_id = run_id,
+        phase4 = load_json(latest_phase4_file()),
     )
+    print(f"[pipeline] ✓ Phase 4 → BigQuery done")
 
     print(f"\n[pipeline] ✅ complete — run_id: {run_id}")
     print(f"  BigQuery: {bq.PROJECT}.{bq.DATASET}.[phase1|phase23|phase4]_results")

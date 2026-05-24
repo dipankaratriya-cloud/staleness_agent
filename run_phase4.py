@@ -18,11 +18,12 @@ import json
 import os
 import re
 import sys
+import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from dotenv import load_dotenv
 
-from pi_date_extractor import extract_date_with_pi
+from gemini_date_extractor import extract_date_with_gemini
 
 load_dotenv()
 
@@ -30,6 +31,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PHASE23_RESULTS = os.path.join(BASE_DIR, "phase23_results.json")
 RESULTS_ROOT = os.path.join(BASE_DIR, "results")
 GROUND_TRUTH_FILE = os.path.join(BASE_DIR, "ground_truth.json")
+
+_save_lock = threading.Lock()  # serialise incremental JSON saves across workers
 
 # File-type priority: lower index = higher priority when sampling across types.
 PRIORITY_EXTS = [".csv", ".xlsx", ".xls", ".tsv", ".json",
@@ -220,9 +223,9 @@ def run_one(dataset_id: str, entry: dict, ground_truth: dict,
 
     actual = ground_truth.get(dataset_id, {}).get("actual_last_obs_date")
     try:
-        date, col, n_checked = extract_date_with_pi(
-            files if len(files) > 1 else files[0],
-            ground_truth=actual,
+        date, col, n_checked = extract_date_with_gemini(
+            files,
+            dataset_id=dataset_id,
         )
     except Exception as e:
         date, col, n_checked = "not_possible", "exception", 0
@@ -246,11 +249,12 @@ def run_one(dataset_id: str, entry: dict, ground_truth: dict,
         "run_at": datetime.now().isoformat(),
     }
 
-    # Persist incrementally — partial results survive a crash
+    # Persist incrementally — partial results survive a crash (lock prevents race)
     results_file = os.path.join(results_dir, "phase4_results.json")
-    all_results = load_json(results_file)
-    all_results[dataset_id] = result
-    save_json(results_file, all_results)
+    with _save_lock:
+        all_results = load_json(results_file)
+        all_results[dataset_id] = result
+        save_json(results_file, all_results)
 
     return result
 

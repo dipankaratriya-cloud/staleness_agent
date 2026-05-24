@@ -1,0 +1,145 @@
+dataset_id,url,last_obs_date,column_used
+developers_google_com_earth_engine_datasets_catalog_google_d,https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_DYNAMICWORLD_V1,2022-11-01,end_date
+www_fema_gov_openfema_data_page_fima_nfip_redacted_claims_v2,https://www.fema.gov/openfema-data-page/fima-nfip-redacted-claims-v2,2015,yearOfLoss
+terrabrasilis_dpi_inpe_br_queimadas_situacao_atual_estatisti,https://terrabrasilis.dpi.inpe.br/queimadas/situacao-atual/estatisticas/estatisticas_estados/,2002,Unnamed: 0
+ec_europa_eu_eurostat_web_main_data_database,https://ec.europa.eu/eurostat/web/main/data/database,2019,time
+civilrightsdata_ed_gov_data,https://civilrightsdata.ed.gov/data,2022,YEAR
+sidra_ibge_gov_br_home_pnadct,https://sidra.ibge.gov.br/home/pnadct,2026-Q1,Trimestre de coleta
+www_1212_mn_en_statcate,https://www.1212.mn/en/statcate,2026,name
+www_google_com_covid19_mobility,https://www.google.com/covid19/mobility/,2020-02-19,date
+ocrdata_ed_gov,https://ocrdata.ed.gov/,2021,year
+dc/base/crdc_instructional_wifi_devices,https://civilrightsdata.ed.gov/data,2022,YEAR
+dc/base/INPE_Fire_Event_Count,https://terrabrasilis.dpi.inpe.br/queimadas/situacao-atual/estatisticas/estatisticas_estados/,2002,Unnamed: 0
+dc/base/DynamicWorld_FloodEvents_Places_AutoRefresh,https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_DYNAMICWORLD_V1,2022-11-01,end_date
+dc/base/Brazil_SIDRA_IBGE,https://sidra.ibge.gov.br/home/pnadct,2026-Q1,Trimestre de coleta
+dc/base/EuroStatHealth_SocialEnvironment,https://ec.europa.eu/eurostat/web/main/data/database,2019,time
+www_eia_gov_electricity_data_eia860,https://www.eia.gov/electricity/data/eia860/,2024,Operating Year
+dc/base/EuroStatHealth_BodyMassIndex,https://ec.europa.eu/eurostat/web/main/data/database,2019,time
+dc/base/EurostatData_Employment_Per_Sector,https://ec.europa.eu/eurostat/databrowser/view/nama_10r_3empers/default/table?lang=en,2024,TIME_PERIOD
+dc/base/EurostatData_Education_Enrollment,https://ec.europa.eu/eurostat/databrowser/view/trng_lfse_04/default/table?lang=en,2025,TIME_PERIOD
+dc/base/EurostatData_Fertility,https://ec.europa.eu/eurostat/databrowser/view/demo_r_find3/default/table?lang=en,2024,TIME_PERIOD
+dc/base/EurostatData_GDP,https://ec.europa.eu/eurostat/databrowser/view/nama_10r_3gdp/default/table?lang=en,2024,TIME_PERIOD
+dc/base/Google_COVID19Mobility,https://www.google.com/covid19/mobility/,2020-02-19,date
+ocrdata_ed_gov_data,https://ocrdata.ed.gov/data,2018,file name
+dc/base/Google_SustainabilityFinancialIncentives,https://www.google.com,2020,extractionConfig.url
+dc/base/NewYorkUniversity_Diabetes,https://www.health.ny.gov/statistics/prevention/injury_prevention/information_for_action/,2009-2011,Data Years
+dc/base/USFEMA_FloodInsuranceClaims,https://www.fema.gov/openfema-data-page/fima-nfip-redacted-claims-v2,2024-09-27,dateOfLoss
+dc/base/IndiaCensus_PrimaryReligion,https://censusindia.gov.in/,2011,Year
+dc/base/EPA_GHGRP,https://www.epa.gov/ghgreporting,2023,2023 Total reported direct emissions
+dc/base/EPA_GHGRP_ParentCompanies_Ownership,https://www.epa.gov/ghgreporting,2023,2023 Total reported direct emissions
+dc/base/US_UrbanSchool_Finances,https://ocrdata.ed.gov/data,2012,year
+dc/base/US_Urban_Schools_Teachers_And_Staff,https://ocrdata.ed.gov/,2010,year
+dc/base/EPA_GHGRPFacilities,https://www.epa.gov/enviro/greenhouse-gas-overview,2023,2023 Total reported direct emissions
+dc/base/EPA_GHGRP_ParentCompanies,https://www.epa.gov/ghgreporting,2023,2023 Total reported direct emissions
+dc/base/EPA_USAirPollutantEmissionTrends_NationalAndState,https://www.epa.gov/air-emissions-inventories/air-pollutant-emissions-trends-data,2024,wide format
+dc/base/EPA_Superfund_SiteContamination,https://www.epa.gov/superfund/superfund-data-and-reports,2017,Fiscal Year
+dc/base/FBIHateCrime,https://www.fbi.gov/services/cjis/ucr/hate-crime,1991-12-24,incident_date
+dc/base/FireWFIGS_AggregatedAreas,https://data-nifc.opendata.arcgis.com/,2005,FIRE_YEAR
+dc/base/FBIHateCrimePublications,https://cde.ucr.cjis.gov/LATEST/webapp/#/pages/explorer/crime/hate-crime,2023,file name
+dc/base/EPA_Superfund_Sites_TarCreek,https://cumulis.epa.gov/supercpad/SiteProfiles/index.cfm?fuseaction=second.scs&id=0601269&doc=Y&colid=33990&region=06&type=SC,2023,file name
+dc/base/RFF_ClimateWildfireSmoke_EchoLab,https://www.stanfordecholab.com/wildfire_smoke,2020-12-31,README.txt
+dc/base/StormNOAA,https://www.ncdc.noaa.gov/,2010-12,time
+dc/base/EurostatData_Education_Attainment,https://ec.europa.eu/eurostat/databrowser/view/edat_lfse_04/default/table?lang=en,2025,TIME_PERIOD
+dc/base/EurostatData_LifeExpectancy,https://ec.europa.eu/eurostat/databrowser/view/demo_r_mlifexp/default/table?lang=en,2024,TIME_PERIOD
+dc/base/EurostatData_PopulationDensity,https://ec.europa.eu/eurostat/databrowser/view/demo_r_d3dens/default/table?lang=en,2024,TIME_PERIOD
+dc/base/EurostatHealth_Tobacco_Consumption,https://ec.europa.eu/eurostat/web/main/data/database,2019,TIME_PERIOD
+dc/base/EurostatData_Demographic_Balance_Crude_Rates,https://ec.europa.eu/eurostat/databrowser/view/demo_r_gind3/default/table?lang=en,2025,TIME_PERIOD
+dc/base/OECDRegionalDemography_LifeExpectancy,https://data-explorer.oecd.org/vis?df[ds]=DisseminateFinalDMZ&df[id]=DSD_REG_DEMO%40DF_LIFE_EXP&df[ag]=OECD.CFE.EDS&df[vs]=2.0&dq=A.......&pd=%2C&to[TIME_PERIOD]=false&vw=tb,1995,TIME_PERIOD
+dc/base/US_SAT_ACT_Participation_state,https://ocrdata.ed.gov/,2021,Unnamed: 1
+dc/base/NewYork_Education,https://data.cityofnewyork.us/browse?category=Education,2023,Year
+dc/base/OECDRegionalDemography_Mortality,https://stats.oecd.org/Index.aspx?DataSetCode=REGION_DEMOGR#,1995,TIME_PERIOD
+dc/base/OECDRegionalDemography_PopulationDensity,https://data-explorer.oecd.org/vis?pg=0&snb=1&tm=pop%20density&df[ds]=dsDisseminateFinalDMZ&df[id]=DSD_REG_DEMO%40DF_DENSITY&df[ag]=OECD.CFE.EDS&df[vs]=2.0&dq=A.......&pd=%2C&to[TIME_PERIOD]=false&vw=tb,2021,TIME_PERIOD
+dc/base/Zurich_Population_By_Sex,https://www.stadt-zuerich.ch/content/dam/web/de/politik-verwaltung/statistik-und-daten/linked-open-data/datacommons/bev_3903_sex_wiki.csv,1993,Zeit
+dc/base/Zurich_Population,https://www.stadt-zuerich.ch/content/dam/web/de/politik-verwaltung/statistik-und-daten/linked-open-data/datacommons/bev_3240_wiki.csv,2023,StichtagDatJahr
+dc/base/India_RBIStateDomesticProduct,https://rbi.org.in/,2016-17,wide format
+dc/base/Zurich_Population_Number_Of_Birth_By_Origin,https://www.stadt-zuerich.ch/content/dam/web/de/politik-verwaltung/statistik-und-daten/linked-open-data/datacommons/bev_4031_hel_wiki.csv,1998,Zeit
+dc/base/OECDRegionalDemography_Population,https://data-explorer.oecd.org/vis?fs[0]=Topic%2C0%7CRegional%252C%20rural%20and%20urban%20development%23GEO%23&pg=40&fc=Topic&bp=true&snb=117&df[ds]=dsDisseminateFinalDMZ&df[id]=DSD_REG_DEMO%40DF_POP_5Y&df[ag]=OECD.CFE.EDS&df[vs]=2.0&dq=A.......&to[TIME_PERIOD]=false&vw=tb&pd=%2C,2020,TIME_PERIOD
+dc/base/Zurich_Population_By_Age,https://www.stadt-zuerich.ch/content/dam/web/de/politik-verwaltung/statistik-und-daten/linked-open-data/datacommons/bev_3903_age10_wiki.csv,1993,Zeit
+dc/base/US_SAT_ACT_Participation,https://ocrdata.ed.gov/,2022,YEAR
+dc/base/US_UrbanSchool_Covid_Directional_Indicators,https://ocrdata.ed.gov/,2014,year
+dc/base/Zurich_Population_Number_Of_Company_Workplace_Employees,https://www.stadt-zuerich.ch/content/dam/web/de/politik-verwaltung/statistik-und-daten/linked-open-data/datacommons/wir_2552_wiki.csv,2011,Zeit
+dc/base/Zurich_Population_Number_Of_Birth,https://www.stadt-zuerich.ch/content/dam/web/de/politik-verwaltung/statistik-und-daten/linked-open-data/datacommons/bev_4031_wiki.csv,1998,Zeit
+dc/base/OECDRegionalEducation,https://stats.oecd.org/Index.aspx?DataSetCode=REGION_EDUCAT,2012,TIME_PERIOD
+dc/base/New_Zealand_Census,https://www.stats.govt.nz/,2023,Year
+dc/base/Zurich_Population_Number_Of_Birth_By_Sex,https://www.stadt-zuerich.ch/content/dam/web/de/politik-verwaltung/statistik-und-daten/linked-open-data/datacommons/bev_4031_sex_wiki.csv,1998,Zeit
+dc/base/UNEnergy,https://unstats.un.org/unsd/energystats/data/,2024,Year
+dc/base/BEA_USStatesQuarterlyGDP,https://www.bea.gov/data/gdp/gdp-state,2025:Q4,wide format
+dc/base/USBTS_Tract_Household_Transportation,https://www.bts.dot.gov/latch/latch-data,2017,usbts_tract_household_transportation_2017_input.csv
+dc/base/CensusSAIPE,https://www.census.gov/programs-surveys/saipe.html,2008,Year
+dc/base/US_UrbanSchool_Enrollment,https://ocrdata.ed.gov/,2022,YEAR
+dc/base/BLS_CPI_Category,https://www.bls.gov/cpi/,2026-04,Apr.\n2026
+dc/base/BLS_JOLTS,https://www.bls.gov/jlt/,2001-04,Date
+dc/base/EarthquakeUSGS,https://earthquake.usgs.gov/,2026-05-21,time
+dc/base/US_CPI,https://www.bls.gov/cpi/,2026-04,Apr.\n2026
+dc/base/BLS_CPI,https://www.bls.gov/cpi/,2000-04,date
+dc/base/USCensusPEP_By_SexRaceHispanicOrigin,https://www.census.gov/programs-surveys/popest.html,1999,1999
+dc/base/USCensusPEP_PopulationEstimatebyRace,https://www.census.gov/programs-surveys/popest.html,2023,YEAR
+dc/base/CensusPEP,https://www.census.gov/programs-surveys/popest.html,1999,Unnamed: 1
+dc/base/USCensusGeos_SurfaceArea,https://www.census.gov/geographies/reference-files.html,2025,file name
+dc/base/USCensusPEP_By_Sex_Race,https://www.census.gov/programs-surveys/popest.html,2023,YEAR
+dc/base/USCensusPEP_Annual_Population,https://www.census.gov/programs-surveys/popest.html,1999,Unnamed: 1
+dc/base/NCHS_BRFSS_Asthma,https://www.cdc.gov/asthma/brfss/default.htm,2021,year
+dc/base/USCensusPEP_AgeSexRace,https://www2.census.gov/programs-surveys/popest/tables,2020,YEAR
+dc/base/CDC_OzoneCensusTract,https://data.cdc.gov/browse?category=Environmental+Health+%26+Toxicology,2002-12-03,date
+dc/base/USCensusPEP_AgeSexRaceHispanicOrigin,https://www2.census.gov/programs-surveys/popest/tables,2024,YEAR
+dc/base/USCensusPEP_MonthlyPopulation,https://www.census.gov/programs-surveys/popest.html,2024,YEAR
+dc/base/CensusSAHIE,https://www.census.gov/programs-surveys/sahie.html,2023,year
+dc/base/CDC_PM25CensusTract,https://data.cdc.gov/browse?category=Environmental+Health+%26+Toxicology,2016-04-07,date
+dc/base/CDCWonder_NNDSS_Infectious_Weekly,https://data.cdc.gov/api/views/x9gk-5huc/rows.csv?accessType=DOWNLOAD&api_foundry=true,2022,Current MMWR Year
+dc/base/GeoCoordinatesData_Simplified,https://www.census.gov/geographies/reference-files/time-series/geo/gazetteer-files.2018.html,2018,file name
+dc/base/GeoCoordinatesData,https://www.census.gov/geographies/reference-files/time-series/geo/gazetteer-files.2018.html,2018,filename
+dc/base/CDC500_States,https://www.cdc.gov/places/index.html,2023,Year
+dc/base/NCES_PrivateSchool,https://nces.ed.gov/ccd/elsi/tableGenerator.aspx,2019,Data Source
+dc/base/Energy_StatVarCalculation,https://datacommons.org/,2024,Year
+dc/base/ICTV_MasterSpeciesList,https://ictv.global/msl,2026-03-20,Date
+dc/base/India_RBIStateDomesticProduct_StatVarAgg_AggCountry,https://rbi.org.in/,2016-17,wide format
+dc/base/India_RBIStateDomesticProduct_StatVarAgg,https://rbi.org.in/,2016-17,wide format
+dc/base/WikidataGeo_Zurich_ADM1,https://en.wikipedia.org/wiki/Subdivisions_of_Zurich,2011,Zeit
+dc/base/India_RBIStateDomesticProduct_AggCountry,https://rbi.org.in/,2016-17,wide format
+dc/base/ZurichGeoImport_ADM2,https://data.stadt-zuerich.ch/dataset/geo_stadtkreise,2011,Zeit
+dc/base/ZurichGeoImport_ADM3,https://data.stadt-zuerich.ch/dataset/geo_stadtkreise,2011,Zeit
+dc/base/US_CRDC_Schools_Directory,https://ocrdata.ed.gov/data,2010,year
+dc/base/DeepSolar_AggCensusTract_AggCounty,http://web.stanford.edu/group/deepsolar/home,2017,cumulative num of residential PVs by 2017
+dc/base/OCHAGeoCoordinates_Tonga,https://data.humdata.org/dataset/cod-ab-ton,2022,file name
+dc/base/OCHAGeoCoordinates_Madagascar,https://data.humdata.org/dataset/whosonfirst-data-admin-mdg,2020,file name
+dc/base/OCHAGeoCoordinates,https://data.humdata.org,2020,file name
+dc/base/EarthquakeUSGS_Agg,https://earthquake.usgs.gov/,2026-05-21,time
+dc/base/DiseaseOntology,https://disease-ontology.org,2026-04-30,owl:versionIRI
+dc/base/CensusACS5YearSurvey_Person_Age_StatVarAgg,https://www.census.gov/,2022,file name
+dc/base/CensusACS5YearSurvey_AbilityToSpeakEnglish_StatVarAgg,https://www.census.gov/,2023,file name
+dc/base/CensusACS5YearSurvey_HousingUnit_HomeValue_StatVarAgg,https://www.census.gov/,2024,file name
+dc/base/US_UrbanOrg_Schools_Directory,"https://educationdata.urban.org/documentation/schools.html#ccd_directory,https://www.census.gov/programs-surveys/ccd/tables/ccd-crdc-schools-directory",2012,YEAR
+dc/base/CensusACS5YearSurvey_SuperEnum,https://www.census.gov/,2023,filename
+dc/base/CensusSAHIE_AggCountry,https://www.census.gov/programs-surveys/sahie.html,2023,year
+dc/base/CensusACS5YearSurvey_Income_StatVarAgg,https://www.census.gov/,2022,file name
+dc/base/CensusACS5YearSurvey_Employment_StatVarAgg,https://www.census.gov/,2022,ACS_2022_5yr_Subject_Tables
+dc/base/NCES_SchoolDistrictStats_SuperEnum,https://datacommons.org/,2024,Data Source
+dc/base/NCBI_Gene,https://www.ncbi.nlm.nih.gov/gene,2026-05-21,Modification_date
+dc/base/WikidataGeo_Singapore,https://en.wikipedia.org/wiki/Regions_of_Singapore,2026,wide format
+dc/base/NCBI_Assembly_Summary_Reports,https://www.ncbi.nlm.nih.gov/assembly/,2025-08-01,annotation_date
+dc/base/MedicalSubjectHeadings,https://meshb.nlm.nih.gov/,2023-02-26,LastUpdated
+dc/base/NCBI_Taxonomy,https://www.ncbi.nlm.nih.gov/taxonomy/,2025,authority
+dc/base/WikidataGeo_Slovenia,https://en.m.wikipedia.org/wiki/Municipalities_of_Slovenia,2013,Population (2013)[6]
+dc/base/WikidataGeo_France,https://en.wikipedia.org/wiki/Regions_of_France,2018,Year
+dc/base/WikidataGeo_Congo,https://en.wikipedia.org/wiki/Provinces_of_the_Democratic_Republic_of_the_Congo,2015,Belgian Congo.3
+dc/base/NCES_PublicSchoolStats_SuperEnum,https://datacommons.org/,2023-24,Data Source
+dc/base/WikidataGeo_Madagascar_ADM2,https://en.wikipedia.org/wiki/Districts_of_Madagascar,2018,Population Census[3] 2018
+dc/base/WikidataGeo_Portugal,https://en.wikipedia.org/wiki/Administrative_divisions_of_Portugal,2017,Ref_Date
+dc/base/OECDRegionalDemography_Person_Age_StatVarAgg,https://datacommons.org/,2020,TIME_PERIOD
+dc/base/Covid19IndiaData,http://projects.datameet.org/covid19/,2020-03-02,DateTime
+dc/base/USDA_AgricultureCensus_Agriculture_StatVarAgg,https://www.nass.usda.gov/AgCensus/,2022,YEAR
+dc/base/FAO_Currency_statvar,https://www.fao.org/faostat/en/#data/PE/metadata,2023,Y2023
+dc/base/IPEDS_StudentToFacultyRatio,https://nces.ed.gov/ipeds/datacenter/DataFiles.aspx?gotoReportId=7&fromIpeds=true&sid=859539d0-db09-4d03-a36a-eabf93d07355&rtid=1,2022,file name
+dc/base/MexicoCensus,https://www.inegi.org.mx/temas/,2024,Year
+dc/base/USMonthlyRetailSales,https://www.census.gov/retail/index.html,2026,"Jan. 2026, Feb. 2026, Mar. 2026(p)"
+dc/base/UN_WHO,https://www.who.int/data,2024,TimeDim
+dc/base/UN_SDG,https://unstats.un.org/sdgs/dataportal,2006,TimePeriod
+dc/base/CensusACS1YearSurvey,https://www.census.gov/programs-surveys/acs/data/data-via-ftp.html,2023,acsdt1y2023-c23001.dat
+dc/base/CensusACS5YearSurvey_SubjectTables_S1301,https://data.census.gov/cedsci/table?q=S1301&tid=ACSST5Y2023.S1301,2023,acsdt5y2023-b01001.dat
+dc/base/CensusACS5YearSurvey_SubjectTables_S2408,https://data.census.gov/cedsci/table?q=S2408&tid=ACSST5Y2023.S2408,2023,file name
+dc/base/USEconomicCensus,https://www.census.gov/programs-surveys/economic-census.html,2022,cbp22co.txt
+dc/base/USDecennialCensus_RedistrictingRelease,https://www.census.gov/programs-surveys/decennial-census/about/rdo/summary-files.html,2020,al000012020.pl
+dc/base/CDC500,https://www.cdc.gov/places/index.html,2025,FILE_NAME
+dc/base/CDCWonder_NNDSS_InfectiousAnnual,https://wonder.cdc.gov/nndss/nndss_annual_tables_menu.asp,2021,mmwr_year
+dc/base/CDCPM25,https://data.cdc.gov/Environmental-Health-Toxicology/Daily-PM2-5-Concentrations-All-County-2001-2016/7vdq-ztk9,2001,year
+dc/base/NASA_WetBulbComputation,https://datacommons.org/,2022,YEAR

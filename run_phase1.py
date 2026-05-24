@@ -31,7 +31,7 @@ def load_provenance(csv_path: str) -> list[dict]:
     rows = []
     with open(csv_path, newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
-            dataset_id = row.get("id") or row.get("prov_id") or ""
+            dataset_id = row.get("dataset_id") or row.get("id") or row.get("prov_id") or ""
             url = row.get("provenance_url") or row.get("url") or ""
             if dataset_id and url:
                 rows.append({"dataset_id": dataset_id.strip(), "url": url.strip()})

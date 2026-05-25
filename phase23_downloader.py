@@ -28,8 +28,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATASETS_DIR = os.path.join(BASE_DIR, "datasets")   # all downloaded data lives here
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
 
-MAX_CORRECTION_ROUNDS = 3   # total agent invocations per dataset (1 initial + 2 corrections)
-ROUND_TIMEOUT = 600         # seconds per round
+MAX_CORRECTION_ROUNDS = 2   # total agent invocations per dataset (1 initial + 1 correction)
+ROUND_TIMEOUT = 300         # seconds per round (successful downloads finish in <3 min)
 
 # Files with these extensions AND >1KB are considered successfully downloaded data.
 DATA_EXTS = {
@@ -417,6 +417,9 @@ def _run_agent(prompt: str, log, counter: list, timeout: int) -> str:
 
 # ─── Public API ───────────────────────────────────────────────────────────────
 
+TERMINAL_CODES = {"auth_required", "paywall"}
+
+
 def download_dataset(dataset_id: str, repo_folder: str, source_url: str,
                      timeout: int = ROUND_TIMEOUT) -> dict:
     os.makedirs(LOGS_DIR, exist_ok=True)
@@ -428,6 +431,25 @@ def download_dataset(dataset_id: str, repo_folder: str, source_url: str,
 
     output_dir = os.path.join(DATASETS_DIR, slug)   # ← inside datasets/
     os.makedirs(output_dir, exist_ok=True)
+
+    # ── Idempotency: skip if already downloaded in a previous run ─────────────
+    existing = _check_output_dir(output_dir)
+    if existing:
+        primary = existing[0]
+        file_format = os.path.splitext(primary)[1].lstrip(".").lower()
+        print(f"  [skip] already downloaded: {os.path.relpath(primary, BASE_DIR)}")
+        return {
+            "status":            "success",
+            "file":              primary,
+            "all_files":         existing,
+            "strategy":          "cached",
+            "rounds_taken":      0,
+            "output_dir":        output_dir,
+            "dataset_id":        dataset_id,
+            "download_time_sec": 0.0,
+            "download_strategy": "cached",
+            "file_format":       file_format,
+        }
 
     base_task = _BASE_TASK.format(
         dataset_id=dataset_id,
@@ -477,6 +499,12 @@ def download_dataset(dataset_id: str, repo_folder: str, source_url: str,
             result = _parse_result(final_text)
 
             log.write(f"\n[round {round_num} agent result] {json.dumps(result)}\n")
+
+            # ── Terminal failure: auth/paywall will never succeed on retry ────
+            if result.get("failure_code") in TERMINAL_CODES:
+                log.write(f"[feedback-loop] ✗ terminal failure ({result['failure_code']}) — no retry\n")
+                result["rounds_taken"] = round_num
+                break
 
             # ── Disk override: trust the filesystem over the agent's claim ──
             downloaded = _check_output_dir(output_dir)

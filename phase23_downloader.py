@@ -17,6 +17,7 @@ import os
 import re
 import subprocess
 import threading
+import time
 from collections import deque
 from datetime import datetime
 from dotenv import load_dotenv
@@ -438,6 +439,7 @@ def download_dataset(dataset_id: str, repo_folder: str, source_url: str,
 
     result = {}
     counter = [0]
+    t_start = time.time()
 
     with open(log_path, "w") as log:
         log.write(
@@ -516,5 +518,18 @@ def download_dataset(dataset_id: str, repo_folder: str, source_url: str,
             f"ended       : {datetime.now().isoformat()}\n"
         )
 
+    download_time_sec = round(time.time() - t_start, 1)
+
+    # Derive file_format from the downloaded file extension
+    primary_file = result.get("file", "")
+    file_format = os.path.splitext(primary_file)[1].lstrip(".").lower() if primary_file else ""
+
     print(f"  [log] {log_path}")
-    return {**result, "output_dir": output_dir, "dataset_id": dataset_id}
+    return {
+        **result,
+        "output_dir":        output_dir,
+        "dataset_id":        dataset_id,
+        "download_time_sec": download_time_sec,
+        "download_strategy": result.get("strategy", ""),
+        "file_format":       file_format,
+    }

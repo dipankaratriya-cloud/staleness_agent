@@ -17,6 +17,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 from datetime import datetime, date, timezone
 
 import bq
@@ -25,13 +26,17 @@ import gcs
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-def run_phase(label, cmd):
+def run_phase(label, cmd) -> float:
+    """Run a pipeline phase subprocess. Returns elapsed seconds."""
     print(f"\n{'='*55}\n[pipeline] ▶ {label}\n{'='*55}")
+    t0 = time.time()
     r = subprocess.run(cmd, cwd=BASE_DIR)
+    elapsed = round(time.time() - t0, 1)
     if r.returncode != 0:
         print(f"[pipeline] ✗ {label} failed — aborting")
         sys.exit(r.returncode)
-    print(f"[pipeline] ✓ {label} done")
+    print(f"[pipeline] ✓ {label} done  ({elapsed}s)")
+    return elapsed
 
 
 def load_json(path):
@@ -91,11 +96,26 @@ def parse_date_to_days(date_str: str | None) -> int | None:
         return None
 
 
+def staleness_label(freshness_days: int | None) -> str:
+    """Bucket freshness into human-readable label."""
+    if freshness_days is None:
+        return "No Date"
+    if freshness_days < 30:
+        return "Fresh"
+    if freshness_days < 180:
+        return "Recent"
+    if freshness_days < 365:
+        return "Stale"
+    return "Very Stale"
+
+
 def compute_delta(run_id: str, phase23: dict, phase4: dict,
-                  prev_phase4: dict | None) -> list[dict]:
+                  prev_phase4: dict | None,
+                  phase_timings: dict | None = None) -> list[dict]:
     """Compute delta metrics for every successfully processed dataset."""
     today = date.today()
     today_days = (today - date(1970, 1, 1)).days
+    phase_timings = phase_timings or {}
     rows = []
 
     for dataset_id, p4 in phase4.items():
@@ -110,7 +130,7 @@ def compute_delta(run_id: str, phase23: dict, phase4: dict,
         # Previous run data
         prev = (prev_phase4 or {}).get(dataset_id, {})
         prev_date_str = prev.get("last_obs_date")
-        prev_row_count = prev.get("row_count_current")  # stored from last run
+        prev_row_count = prev.get("row_count_current")
 
         # Date delta
         curr_days = parse_date_to_days(p4.get("last_obs_date"))
@@ -128,18 +148,37 @@ def compute_delta(run_id: str, phase23: dict, phase4: dict,
             row_additions = max(0, diff)
             row_deletions = max(0, -diff)
 
+        # File format from phase23
+        file_format = p23.get("file_format", "")
+        if not file_format and filepath:
+            file_format = os.path.splitext(filepath)[1].lstrip(".").lower()
+
         rows.append({
-            "dataset_id":          dataset_id,
-            "source_url":          p4.get("source_url", p23.get("url", "")),
-            "last_obs_date":       p4.get("last_obs_date"),
-            "prev_last_obs_date":  prev_date_str,
-            "date_delta_days":     date_delta,
-            "data_freshness_days": freshness,
-            "row_count_current":   row_count_current,
-            "row_count_previous":  prev_row_count,
-            "row_additions":       row_additions,
-            "row_deletions":       row_deletions,
-            "file_size_bytes":     file_size,
+            "dataset_id":              dataset_id,
+            "source_url":              p4.get("source_url", p23.get("url", "")),
+            # Date metrics
+            "last_obs_date":           p4.get("last_obs_date"),
+            "prev_last_obs_date":      prev_date_str,
+            "date_delta_days":         date_delta,
+            "data_freshness_days":     freshness,
+            "staleness_label":         staleness_label(freshness),
+            # Row / file metrics
+            "row_count_current":       row_count_current,
+            "row_count_previous":      prev_row_count,
+            "row_additions":           row_additions,
+            "row_deletions":           row_deletions,
+            "file_size_bytes":         file_size,
+            "file_format":             file_format,
+            # Download metrics
+            "download_strategy":       p23.get("download_strategy", ""),
+            "download_time_sec":       p23.get("download_time_sec"),
+            # Extraction metrics
+            "extraction_time_sec":     p4.get("extraction_time_sec"),
+            # Phase timing (same for all rows in this run)
+            "phase1_time_sec":         phase_timings.get("phase1"),
+            "phase23_time_sec":        phase_timings.get("phase23"),
+            "phase4_time_sec":         phase_timings.get("phase4"),
+            "total_pipeline_time_sec": phase_timings.get("total"),
         })
 
     return rows
@@ -158,10 +197,11 @@ def latest_phase4_file():
 
 
 def main():
-    run_id  = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-    workers = os.environ.get("WORKERS", "4")
-    resume  = os.environ.get("RESUME", "false").lower() == "true"
-    input_f = os.environ.get("INPUT_FILE", os.path.join(BASE_DIR, "Provenance.csv"))
+    run_id      = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    workers     = os.environ.get("WORKERS", "4")
+    resume      = os.environ.get("RESUME", "false").lower() == "true"
+    input_f     = os.environ.get("INPUT_FILE", os.path.join(BASE_DIR, "Provenance.csv"))
+    pipeline_t0 = time.time()
 
     print(f"[pipeline] run_id : {run_id}")
     print(f"[pipeline] input  : {input_f}")
@@ -174,7 +214,7 @@ def main():
     cmd = ["python3", "run_phase1.py", input_f, "--workers", workers]
     if resume:
         cmd.append("--resume")
-    run_phase("Phase 1 — URL → repo match", cmd)
+    phase1_time = run_phase("Phase 1 — URL → repo match", cmd)
 
     print(f"\n[pipeline] pushing Phase 1 results to BigQuery...")
     bq.write_phase1(
@@ -187,7 +227,7 @@ def main():
     cmd = ["python3", "run_phase23.py", "phase1_results.json", "--workers", workers]
     if resume:
         cmd.append("--resume")
-    run_phase("Phase 2+3 — dataset download", cmd)
+    phase23_time = run_phase("Phase 2+3 — dataset download", cmd)
 
     # ── Enrich phase23 with file size + row count, upload files to GCS ───────
     phase23_data = load_json(os.path.join(BASE_DIR, "phase23_results.json"))
@@ -213,7 +253,7 @@ def main():
     cmd = ["python3", "run_phase4.py", "--workers", workers]
     if resume:
         cmd.append("--resume")
-    run_phase("Phase 4 — observation date extraction", cmd)
+    phase4_time = run_phase("Phase 4 — observation date extraction", cmd)
 
     phase4_data = load_json(latest_phase4_file())
 
@@ -222,6 +262,14 @@ def main():
     print(f"[pipeline] ✓ Phase 4 → BigQuery done")
 
     # ── Fetch previous run from GCS and compute delta metrics ─────────────────
+    total_time = round(time.time() - pipeline_t0, 1)
+    phase_timings = {
+        "phase1":  phase1_time,
+        "phase23": phase23_time,
+        "phase4":  phase4_time,
+        "total":   total_time,
+    }
+
     print(f"\n[pipeline] computing delta metrics vs previous run...")
     try:
         prev_phase4 = gcs.get_previous_run_results(run_id)
@@ -229,7 +277,7 @@ def main():
         print(f"  [gcs] could not fetch previous run (first run?): {e}")
         prev_phase4 = None
 
-    delta_rows = compute_delta(run_id, phase23_data, phase4_data, prev_phase4)
+    delta_rows = compute_delta(run_id, phase23_data, phase4_data, prev_phase4, phase_timings)
     print(f"[pipeline] computed delta for {len(delta_rows)} datasets")
     bq.write_delta(run_id=run_id, delta=delta_rows)
     print(f"[pipeline] ✓ delta_results → BigQuery done")
@@ -241,12 +289,13 @@ def main():
     except Exception as e:
         print(f"  [gcs] artifact upload skipped: {e}")
 
-    print(f"\n[pipeline] ✅ complete — run_id: {run_id}")
+    print(f"\n[pipeline] ✅ complete — run_id: {run_id}  total_time: {total_time}s")
+    print(f"  Phase timings:  P1={phase1_time}s  P2+3={phase23_time}s  P4={phase4_time}s")
     print(f"  BigQuery tables:")
     print(f"    {bq.PROJECT}.{bq.DATASET}.phase1_results")
-    print(f"    {bq.PROJECT}.{bq.DATASET}.phase23_results  (with file_size + row_count)")
+    print(f"    {bq.PROJECT}.{bq.DATASET}.phase23_results")
     print(f"    {bq.PROJECT}.{bq.DATASET}.phase4_results")
-    print(f"    {bq.PROJECT}.{bq.DATASET}.delta_results    (staleness + additions/deletions)")
+    print(f"    {bq.PROJECT}.{bq.DATASET}.delta_results  ← full report")
 
 
 if __name__ == "__main__":

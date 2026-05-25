@@ -19,6 +19,7 @@ import os
 import re
 import sys
 import threading
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from dotenv import load_dotenv
@@ -222,6 +223,7 @@ def run_one(dataset_id: str, entry: dict, ground_truth: dict,
     print(f"  status: running phase 4...")
 
     actual = ground_truth.get(dataset_id, {}).get("actual_last_obs_date")
+    t0 = time.time()
     try:
         date, col, n_checked = extract_date_with_gemini(
             files,
@@ -230,12 +232,13 @@ def run_one(dataset_id: str, entry: dict, ground_truth: dict,
     except Exception as e:
         date, col, n_checked = "not_possible", "exception", 0
         print(f"  error : {e}")
+    extraction_time_sec = round(time.time() - t0, 1)
 
     match = (str(date) == str(actual)) if actual else None
     if actual:
         verdict = "✅ CORRECT" if match else f"❌ WRONG (actual={actual})"
         print(f"  check : {verdict}")
-    print(f"  result: last_obs_date={date}  column={col}  files_checked={n_checked}")
+    print(f"  result: last_obs_date={date}  column={col}  files_checked={n_checked}  time={extraction_time_sec}s")
 
     result = {
         "dataset_id": dataset_id,
@@ -246,6 +249,7 @@ def run_one(dataset_id: str, entry: dict, ground_truth: dict,
         "actual_last_obs_date": actual,
         "match": match,
         "source_url": entry.get("url", ""),
+        "extraction_time_sec": extraction_time_sec,
         "run_at": datetime.now().isoformat(),
     }
 

@@ -9,6 +9,7 @@ groq
 # GCP
 google-cloud-bigquery
 google-cloud-storage
+google-generativeai
 
 # Existing deps
 # dataclasses  ← built into Python 3.7+, no install needed

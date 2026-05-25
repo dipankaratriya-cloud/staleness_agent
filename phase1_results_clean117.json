@@ -1,0 +1,938 @@
+{
+  "dc/base/Brazil_SIDRA_IBGE": {
+    "dataset_id": "dc/base/Brazil_SIDRA_IBGE",
+    "url": "https://sidra.ibge.gov.br/home/pnadct",
+    "matched_folder": "statvar_imports/brazil_sidra_ibge",
+    "confidence": "high",
+    "dataset_name": "Sistema IBGE de Recupera&#231;&#227;o Autom&#225;tica - SIDRA",
+    "reason": "The dataset ID and source URL directly correspond to the `statvar_imports/brazil_sidra_ibge` folder."
+  },
+  "dc/base/INPE_Fire_Event_Count": {
+    "dataset_id": "dc/base/INPE_Fire_Event_Count",
+    "url": "https://terrabrasilis.dpi.inpe.br/queimadas/situacao-atual/estatisticas/estatisticas_estados/",
+    "matched_folder": "scripts/rff/climate_wildfire_smoke",
+    "confidence": "medium",
+    "dataset_name": "Monitoramento dos Focos Ativos por Estado, Regi\u00e3o ou Bioma - Programa Queimadas - INPE",
+    "reason": "The dataset contains fire event counts, and the `scripts/rff/climate_wildfire_smoke` folder seems like the best fit for wildfire-related data."
+  },
+  "dc/base/DynamicWorld_FloodEvents_Places_AutoRefresh": {
+    "dataset_id": "dc/base/DynamicWorld_FloodEvents_Places_AutoRefresh",
+    "url": "https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_DYNAMICWORLD_V1",
+    "matched_folder": "scripts/google_datasets",
+    "confidence": "high",
+    "dataset_name": "Dynamic World V1 &nbsp;|&nbsp; Earth Engine Data Catalog &nbsp;|&nbsp; Google for Developers",
+    "reason": "The dataset is from Google Earth Engine, so scripts/google_datasets is the most appropriate folder."
+  },
+  "dc/base/EuroStatHealth_BodyMassIndex": {
+    "dataset_id": "dc/base/EuroStatHealth_BodyMassIndex",
+    "url": "https://ec.europa.eu/eurostat/web/main/data/database",
+    "matched_folder": "scripts/eurostat/health_determinants/bmi",
+    "confidence": "high",
+    "dataset_name": "Database - Eurostat",
+    "reason": "The dataset ID contains 'EuroStatHealth_BodyMassIndex', the source URL is eurostat.europa.eu, and the folder name includes both 'eurostat' and 'bmi'."
+  },
+  "dc/base/EuroStatHealth_SocialEnvironment": {
+    "dataset_id": "dc/base/EuroStatHealth_SocialEnvironment",
+    "url": "https://ec.europa.eu/eurostat/web/main/data/database",
+    "matched_folder": "scripts/eurostat/health_determinants/social_environment",
+    "confidence": "medium",
+    "dataset_name": "Database - Eurostat",
+    "reason": "The dataset ID contains 'EuroStatHealth_SocialEnvironment', the URL is from Eurostat, and there is a folder specifically for Eurostat health determinants and social environment."
+  },
+  "dc/base/EurostatData_Employment_Per_Sector": {
+    "dataset_id": "dc/base/EurostatData_Employment_Per_Sector",
+    "url": "https://ec.europa.eu/eurostat/databrowser/view/nama_10r_3empers/default/table?lang=en",
+    "matched_folder": "scripts/eurostat/regional_statistics_by_nuts/employed_per_sector",
+    "confidence": "high",
+    "dataset_name": "https://ec.europa.eu/eurostat/databrowser/view/nama_10r_3empers/default/table?lang=en",
+    "reason": "The dataset ID and URL indicate Eurostat data related to employment per sector, and the folder name directly reflects this."
+  },
+  "dc/base/EurostatData_Education_Enrollment": {
+    "dataset_id": "dc/base/EurostatData_Education_Enrollment",
+    "url": "https://ec.europa.eu/eurostat/databrowser/view/trng_lfse_04/default/table?lang=en",
+    "matched_folder": "scripts/eurostat/regional_statistics_by_nuts/education_enrollment",
+    "confidence": "high",
+    "dataset_name": "https://ec.europa.eu/eurostat/databrowser/view/trng_lfse_04/default/table?lang=en",
+    "reason": "The dataset ID and URL domain indicate Eurostat data related to education enrollment, and the folder name directly reflects this."
+  },
+  "dc/base/EurostatData_Fertility": {
+    "dataset_id": "dc/base/EurostatData_Fertility",
+    "url": "https://ec.europa.eu/eurostat/databrowser/view/demo_r_find3/default/table?lang=en",
+    "matched_folder": "scripts/eurostat/regional_statistics_by_nuts/fertility_rate_mother_age",
+    "confidence": "high",
+    "dataset_name": "https://ec.europa.eu/eurostat/databrowser/view/demo_r_find3/default/table?lang=en",
+    "reason": "The dataset ID and URL domain point to Eurostat data about fertility, and the folder name explicitly mentions fertility rate and mother's age."
+  },
+  "dc/base/USFEMA_FloodInsuranceClaims": {
+    "dataset_id": "dc/base/USFEMA_FloodInsuranceClaims",
+    "url": "https://www.fema.gov/openfema-data-page/fima-nfip-redacted-claims-v2",
+    "matched_folder": "statvar_imports/fema/flood_insurance_claims",
+    "confidence": "high",
+    "dataset_name": "https://www.fema.gov/openfema-data-page/fima-nfip-redacted-claims-v2",
+    "reason": "The dataset ID and source URL clearly indicate that this dataset is related to FEMA flood insurance claims, which directly corresponds to the folder name."
+  },
+  "dc/base/EurostatData_GDP": {
+    "dataset_id": "dc/base/EurostatData_GDP",
+    "url": "https://ec.europa.eu/eurostat/databrowser/view/nama_10r_3gdp/default/table?lang=en",
+    "matched_folder": "scripts/eurostat/regional_statistics_by_nuts/gdp",
+    "confidence": "high",
+    "dataset_name": "https://ec.europa.eu/eurostat/databrowser/view/nama_10r_3gdp/default/table?lang=en",
+    "reason": "The dataset ID and URL both indicate Eurostat GDP data, and the folder scripts/eurostat/regional_statistics_by_nuts/gdp is the most relevant."
+  },
+  "dc/base/Google_SustainabilityFinancialIncentives": {
+    "dataset_id": "dc/base/Google_SustainabilityFinancialIncentives",
+    "url": "https://www.google.com",
+    "matched_folder": "statvar_imports/google_sustainability_financial_incentives",
+    "confidence": "high",
+    "dataset_name": "Google",
+    "reason": "The dataset ID and folder name directly match the Google Sustainability Financial Incentives dataset."
+  },
+  "dc/base/Google_COVID19Mobility": {
+    "dataset_id": "dc/base/Google_COVID19Mobility",
+    "url": "https://www.google.com/covid19/mobility/",
+    "matched_folder": "scripts/google_covid/mobility",
+    "confidence": "high",
+    "dataset_name": "COVID-19 Community Mobility Reports",
+    "reason": "The dataset ID, source URL (google.com), and page title all strongly suggest this folder is the best match."
+  },
+  "dc/base/NewYorkUniversity_Diabetes": {
+    "dataset_id": "dc/base/NewYorkUniversity_Diabetes",
+    "url": "https://www.health.ny.gov/statistics/prevention/injury_prevention/information_for_action/",
+    "matched_folder": "statvar_imports/us_newyork/ny_diabetes",
+    "confidence": "high",
+    "dataset_name": "https://www.health.ny.gov/statistics/prevention/injury_prevention/information_for_action/",
+    "reason": "The dataset ID contains 'NewYorkUniversity_Diabetes' and the source URL is from New York State Department of Health, matching the folder structure for New York diabetes data."
+  },
+  "dc/base/US_Urban_Schools_Teachers_And_Staff": {
+    "dataset_id": "dc/base/US_Urban_Schools_Teachers_And_Staff",
+    "url": "https://ocrdata.ed.gov/",
+    "matched_folder": "statvar_imports/us_urban_school/teachers",
+    "confidence": "high",
+    "dataset_name": "https://ocrdata.ed.gov/",
+    "reason": "The dataset ID contains 'Teachers' and the source URL relates to US urban schools, matching the folder name and implying relevant data."
+  },
+  "dc/base/US_UrbanSchool_Finances": {
+    "dataset_id": "dc/base/US_UrbanSchool_Finances",
+    "url": "https://ocrdata.ed.gov/data",
+    "matched_folder": "statvar_imports/school_finance/test_data",
+    "confidence": "medium",
+    "dataset_name": "https://ocrdata.ed.gov/data",
+    "reason": "The dataset ID and source URL suggest school finance data, and this folder is the most relevant."
+  },
+  "dc/base/IndiaCensus_PrimaryReligion": {
+    "dataset_id": "dc/base/IndiaCensus_PrimaryReligion",
+    "url": "https://censusindia.gov.in/",
+    "matched_folder": "scripts/india_census/primary_religion_data",
+    "confidence": "high",
+    "dataset_name": "https://censusindia.gov.in/",
+    "reason": "The dataset ID and source URL strongly suggest this folder as it directly relates to India Census data on primary religion."
+  },
+  "dc/base/EPA_GHGRP_ParentCompanies_Ownership": {
+    "dataset_id": "dc/base/EPA_GHGRP_ParentCompanies_Ownership",
+    "url": "https://www.epa.gov/ghgreporting",
+    "matched_folder": "scripts/us_epa/parent_company",
+    "confidence": "high",
+    "dataset_name": "Greenhouse Gas Reporting Program (GHGRP) | US EPA",
+    "reason": "The dataset ID contains 'EPA_GHGRP_ParentCompanies' and the source URL is from epa.gov, matching the folder name 'scripts/us_epa/parent_company'."
+  },
+  "dc/base/EPA_GHGRP_ParentCompanies": {
+    "dataset_id": "dc/base/EPA_GHGRP_ParentCompanies",
+    "url": "https://www.epa.gov/ghgreporting",
+    "matched_folder": "scripts/us_epa/parent_company",
+    "confidence": "high",
+    "dataset_name": "Greenhouse Gas Reporting Program (GHGRP) | US EPA",
+    "reason": "The dataset ID and source URL strongly suggest this folder, as it relates to EPA's GHGRP and parent companies."
+  },
+  "dc/base/EPA_USAirPollutantEmissionTrends_NationalAndState": {
+    "dataset_id": "dc/base/EPA_USAirPollutantEmissionTrends_NationalAndState",
+    "url": "https://www.epa.gov/air-emissions-inventories/air-pollutant-emissions-trends-data",
+    "matched_folder": "scripts/us_epa/air_emissions_inventory/national_state",
+    "confidence": "high",
+    "dataset_name": "Air Pollutant Emissions Trends Data | US EPA",
+    "reason": "The dataset ID and source URL clearly indicate that this dataset belongs to the EPA's air emissions inventory, specifically focusing on national and state-level data."
+  },
+  "dc/base/EPA_Superfund_SiteContamination": {
+    "dataset_id": "dc/base/EPA_Superfund_SiteContamination",
+    "url": "https://www.epa.gov/superfund/superfund-data-and-reports",
+    "matched_folder": "scripts/us_epa/superfund/site_contamination",
+    "confidence": "high",
+    "dataset_name": "Superfund Data and Reports | US EPA",
+    "reason": "The dataset ID and the folder name both contain 'site_contamination' and the source is the EPA Superfund program."
+  },
+  "dc/base/EPA_Superfund_Sites_TarCreek": {
+    "dataset_id": "dc/base/EPA_Superfund_Sites_TarCreek",
+    "url": "https://cumulis.epa.gov/supercpad/SiteProfiles/index.cfm?fuseaction=second.scs&id=0601269&doc=Y&colid=33990&region=06&type=SC",
+    "matched_folder": "scripts/us_epa/superfund/sites",
+    "confidence": "high",
+    "dataset_name": "TAR CREEK (OTTAWA COUNTY) | Superfund Site Profile | Superfund Site Information | US EPA",
+    "reason": "The dataset ID and URL domain indicate EPA Superfund sites, and the page title confirms it's a profile of a specific site, making the 'sites' folder the most appropriate."
+  },
+  "dc/base/FBIHateCrimePublications": {
+    "dataset_id": "dc/base/FBIHateCrimePublications",
+    "url": "https://cde.ucr.cjis.gov/LATEST/webapp/#/pages/explorer/crime/hate-crime",
+    "matched_folder": "scripts/fbi/hate_crime",
+    "confidence": "high",
+    "dataset_name": "https://cde.ucr.cjis.gov/LATEST/webapp/#/pages/explorer/crime/hate-crime",
+    "reason": "The dataset ID contains 'FBIHateCrimePublications' and the URL and page title clearly indicate FBI hate crime data, making 'scripts/fbi/hate_crime' the most relevant folder."
+  },
+  "dc/base/FBIHateCrime": {
+    "dataset_id": "dc/base/FBIHateCrime",
+    "url": "https://www.fbi.gov/services/cjis/ucr/hate-crime",
+    "matched_folder": "scripts/fbi/hate_crime",
+    "confidence": "high",
+    "dataset_name": "https://www.fbi.gov/services/cjis/ucr/hate_crime",
+    "reason": "The dataset ID and source URL clearly indicate that this data belongs in the scripts/fbi/hate_crime folder."
+  },
+  "dc/base/FireWFIGS_AggregatedAreas": {
+    "dataset_id": "dc/base/FireWFIGS_AggregatedAreas",
+    "url": "https://data-nifc.opendata.arcgis.com/",
+    "matched_folder": "scripts/fires",
+    "confidence": "high",
+    "dataset_name": "National Interagency Fire Center",
+    "reason": "The dataset ID contains 'Fire' and the source URL and page title are related to the National Interagency Fire Center, making scripts/fires the most relevant folder."
+  },
+  "dc/base/RFF_ClimateWildfireSmoke_EchoLab": {
+    "dataset_id": "dc/base/RFF_ClimateWildfireSmoke_EchoLab",
+    "url": "https://www.stanfordecholab.com/wildfire_smoke",
+    "matched_folder": "scripts/rff/climate_wildfire_smoke",
+    "confidence": "high",
+    "dataset_name": "wildfire_smoke &mdash; ECHO:  Environmental Change and Human Outcomes Lab    |    Stanford University",
+    "reason": "The dataset ID and source URL strongly suggest this folder as the best match."
+  },
+  "dc/base/US_UrbanSchool_Covid_Directional_Indicators": {
+    "dataset_id": "dc/base/US_UrbanSchool_Covid_Directional_Indicators",
+    "url": "https://ocrdata.ed.gov/",
+    "matched_folder": "statvar_imports/us_urban_school/covid_directional_indicators",
+    "confidence": "high",
+    "dataset_name": "https://ocrdata.ed.gov/",
+    "reason": "The dataset ID and the folder name both contain 'US_UrbanSchool' and 'Covid_Directional_Indicators', indicating a strong match."
+  },
+  "dc/base/EurostatHealth_Tobacco_Consumption": {
+    "dataset_id": "dc/base/EurostatHealth_Tobacco_Consumption",
+    "url": "https://ec.europa.eu/eurostat/web/main/data/database",
+    "matched_folder": "scripts/eurostat/health_determinants/tobacco_consumption",
+    "confidence": "high",
+    "dataset_name": "Database - Eurostat",
+    "reason": "The dataset ID and source URL clearly indicate Eurostat data related to tobacco consumption, matching the folder name."
+  },
+  "dc/base/EurostatData_Education_Attainment": {
+    "dataset_id": "dc/base/EurostatData_Education_Attainment",
+    "url": "https://ec.europa.eu/eurostat/databrowser/view/edat_lfse_04/default/table?lang=en",
+    "matched_folder": "scripts/eurostat/regional_statistics_by_nuts/education_attainment",
+    "confidence": "high",
+    "dataset_name": "https://ec.europa.eu/eurostat/databrowser/view/edat_lfse_04/default/table?lang=en",
+    "reason": "The dataset ID contains 'EurostatData_Education_Attainment' and the URL is from eurostat, which aligns perfectly with the folder name 'scripts/eurostat/regional_statistics_by_nuts/education_attainment'."
+  },
+  "dc/base/EurostatData_PopulationDensity": {
+    "dataset_id": "dc/base/EurostatData_PopulationDensity",
+    "url": "https://ec.europa.eu/eurostat/databrowser/view/demo_r_d3dens/default/table?lang=en",
+    "matched_folder": "scripts/eurostat/regional_statistics_by_nuts/population_density",
+    "confidence": "high",
+    "dataset_name": "https://ec.europa.eu/eurostat/databrowser/view/demo_r_d3dens/default/table?lang=en",
+    "reason": "The dataset ID and URL domain point to Eurostat data, specifically population density, and there's a folder dedicated to population density within Eurostat's regional statistics."
+  },
+  "dc/base/EurostatData_LifeExpectancy": {
+    "dataset_id": "dc/base/EurostatData_LifeExpectancy",
+    "url": "https://ec.europa.eu/eurostat/databrowser/view/demo_r_mlifexp/default/table?lang=en",
+    "matched_folder": "scripts/eurostat/regional_statistics_by_nuts/life_expectancy",
+    "confidence": "high",
+    "dataset_name": "https://ec.europa.eu/eurostat/databrowser/view/demo_r_mlifexp/default/table?lang=en",
+    "reason": "The dataset ID and URL domain point to Eurostat data, specifically life expectancy, and the page title confirms it relates to life expectancy data from Eurostat, which aligns with the folder name."
+  },
+  "dc/base/EurostatData_Demographic_Balance_Crude_Rates": {
+    "dataset_id": "dc/base/EurostatData_Demographic_Balance_Crude_Rates",
+    "url": "https://ec.europa.eu/eurostat/databrowser/view/demo_r_gind3/default/table?lang=en",
+    "matched_folder": "scripts/eurostat/regional_statistics_by_nuts/birth_death_migration",
+    "confidence": "high",
+    "dataset_name": "https://ec.europa.eu/eurostat/databrowser/view/demo_r_gind3/default/table?lang=en",
+    "reason": "The dataset ID and URL indicate Eurostat data related to demographic balance and crude rates, which aligns with the birth_death_migration folder under regional statistics."
+  },
+  "dc/base/NewYork_Education": {
+    "dataset_id": "dc/base/NewYork_Education",
+    "url": "https://data.cityofnewyork.us/browse?category=Education",
+    "matched_folder": "statvar_imports/us_education/new_york_education",
+    "confidence": "high",
+    "dataset_name": "https://data.cityofnewyork.us/browse?category=Education",
+    "reason": "The dataset ID and source URL clearly indicate New York education data, matching the folder name."
+  },
+  "dc/base/OECDRegionalDemography_LifeExpectancy": {
+    "dataset_id": "dc/base/OECDRegionalDemography_LifeExpectancy",
+    "url": "https://data-explorer.oecd.org/vis?df[ds]=DisseminateFinalDMZ&df[id]=DSD_REG_DEMO%40DF_LIFE_EXP&df[ag]=OECD.CFE.EDS&df[vs]=2.0&dq=A.......&pd=%2C&to[TIME_PERIOD]=false&vw=tb",
+    "matched_folder": "scripts/oecd/regional_demography/life_expectancy",
+    "confidence": "high",
+    "dataset_name": "https://data-explorer.oecd.org/vis?df[ds]=DisseminateFinalDMZ&df[id]=DSD_REG_DEMO%40DF_LIFE_EXP&df[ag]=OECD.CFE.EDS&df[vs]=2.0&dq=A.......&pd=%2C&to[TIME_PERIOD]=false&vw=tb",
+    "reason": "The dataset ID and URL both indicate OECD regional demography data specifically related to life expectancy, matching the folder name."
+  },
+  "dc/base/US_UrbanSchool_Enrollment": {
+    "dataset_id": "dc/base/US_UrbanSchool_Enrollment",
+    "url": "https://ocrdata.ed.gov/",
+    "matched_folder": "statvar_imports/us_urban_school/enrollment",
+    "confidence": "high",
+    "dataset_name": "https://ocrdata.ed.gov/",
+    "reason": "The dataset ID contains 'US_UrbanSchool_Enrollment' and the source URL is related to education, making 'statvar_imports/us_urban_school/enrollment' the most relevant folder."
+  },
+  "dc/base/OECDRegionalDemography_Mortality": {
+    "dataset_id": "dc/base/OECDRegionalDemography_Mortality",
+    "url": "https://stats.oecd.org/Index.aspx?DataSetCode=REGION_DEMOGR#",
+    "matched_folder": "scripts/oecd/regional_demography/mortality",
+    "confidence": "high",
+    "dataset_name": "https://stats.oecd.org/Index.aspx?DataSetCode=REGION_DEMOGR#",
+    "reason": "The dataset ID and URL clearly indicate that this dataset belongs to OECD regional demography and specifically focuses on mortality data, matching the folder name."
+  },
+  "dc/base/US_SAT_ACT_Participation": {
+    "dataset_id": "dc/base/US_SAT_ACT_Participation",
+    "url": "https://ocrdata.ed.gov/",
+    "matched_folder": "statvar_imports/us_urban_school/sat_act_participation/state",
+    "confidence": "high",
+    "dataset_name": "https://ocrdata.ed.gov/",
+    "reason": "The dataset ID and source URL strongly suggest SAT/ACT participation data, and the folder name explicitly mentions this, with the state level being the most appropriate granularity."
+  },
+  "dc/base/OECDRegionalDemography_Population": {
+    "dataset_id": "dc/base/OECDRegionalDemography_Population",
+    "url": "https://data-explorer.oecd.org/vis?fs[0]=Topic%2C0%7CRegional%252C%20rural%20and%20urban%20development%23GEO%23&pg=40&fc=Topic&bp=true&snb=117&df[ds]=dsDisseminateFinalDMZ&df[id]=DSD_REG_DEMO%40DF_POP_5Y&df[ag]=OECD.CFE.EDS&df[vs]=2.0&dq=A.......&to[TIME_PERIOD]=false&vw=tb&pd=%2C",
+    "matched_folder": "scripts/oecd/regional_demography/population",
+    "confidence": "high",
+    "dataset_name": "https://data-explorer.oecd.org/vis?fs[0]=Topic%2C0%7CRegional%252C%20rural%20and%20urban%20development%23GEO%23&pg=40&fc=Topic&bp=true&snb=117&df[ds]=dsDisseminateFinalDMZ&df[id]=DSD_REG_DEMO%40DF_POP_5Y&df[ag]=OECD.CFE.EDS&df[vs]=2.0&dq=A.......&to[TIME_PERIOD]=false&vw=tb&pd=%2C",
+    "reason": "The dataset ID contains 'OECDRegionalDemography_Population' and the URL is from oecd.org, so the folder 'scripts/oecd/regional_demography/population' is the best match."
+  },
+  "dc/base/OECDRegionalDemography_PopulationDensity": {
+    "dataset_id": "dc/base/OECDRegionalDemography_PopulationDensity",
+    "url": "https://data-explorer.oecd.org/vis?pg=0&snb=1&tm=pop%20density&df[ds]=dsDisseminateFinalDMZ&df[id]=DSD_REG_DEMO%40DF_DENSITY&df[ag]=OECD.CFE.EDS&df[vs]=2.0&dq=A.......&pd=%2C&to[TIME_PERIOD]=false&vw=tb",
+    "matched_folder": "scripts/oecd/regional_demography/pop_density",
+    "confidence": "high",
+    "dataset_name": "https://data-explorer.oecd.org/vis?pg=0&snb=1&tm=pop%20density&df[ds]=dsDisseminateFinalDMZ&df[id]=DSD_REG_DEMO%40DF_DENSITY&df[ag]=OECD.CFE.EDS&df[vs]=2.0&dq=A.......&pd=%2C&to[TIME_PERIOD]=false&vw=tb",
+    "reason": "The dataset ID and URL both indicate OECD regional demography and population density, matching the folder name."
+  },
+  "dc/base/OECDRegionalEducation": {
+    "dataset_id": "dc/base/OECDRegionalEducation",
+    "url": "https://stats.oecd.org/Index.aspx?DataSetCode=REGION_EDUCAT",
+    "matched_folder": "statvar_imports/oecd/regional_education",
+    "confidence": "high",
+    "dataset_name": "https://stats.oecd.org/Index.aspx?DataSetCode=REGION_EDUCAT",
+    "reason": "The dataset ID and source URL clearly indicate that this dataset belongs to the OECD regional education category, matching the folder name."
+  },
+  "dc/base/India_RBIStateDomesticProduct": {
+    "dataset_id": "dc/base/India_RBIStateDomesticProduct",
+    "url": "https://rbi.org.in/",
+    "matched_folder": "statvar_imports/india_rbistatedomesticproduct",
+    "confidence": "high",
+    "dataset_name": "Home - Reserve Bank of India",
+    "reason": "The dataset ID and folder name both contain 'india_rbistatedomesticproduct', indicating a direct match."
+  },
+  "dc/base/Zurich_Population_By_Sex": {
+    "dataset_id": "dc/base/Zurich_Population_By_Sex",
+    "url": "https://www.stadt-zuerich.ch/content/dam/web/de/politik-verwaltung/statistik-und-daten/linked-open-data/datacommons/bev_3903_sex_wiki.csv",
+    "matched_folder": "statvar_imports/zurich/bev_3903_sex_wiki",
+    "confidence": "high",
+    "dataset_name": "https://www.stadt-zuerich.ch/content/dam/web/de/politik-verwaltung/statistik-und-daten/linked-open-data/datacommons/bev_3903_sex_wiki.csv",
+    "reason": "The dataset ID and source URL directly correspond to the folder name, indicating a specific import for Zurich population data by sex."
+  },
+  "dc/base/Zurich_Population": {
+    "dataset_id": "dc/base/Zurich_Population",
+    "url": "https://www.stadt-zuerich.ch/content/dam/web/de/politik-verwaltung/statistik-und-daten/linked-open-data/datacommons/bev_3240_wiki.csv",
+    "matched_folder": "scripts/datacommons",
+    "confidence": "low",
+    "dataset_name": "https://www.stadt-zuerich.ch/content/dam/web/de/politik-verwaltung/statistik-und-daten/linked-open-data/datacommons/bev_3240_wiki.csv",
+    "reason": "The dataset ID starts with `dc/base` and the URL contains `datacommons`, suggesting it might belong in the `scripts/datacommons` folder, although a more specific folder is not available."
+  },
+  "dc/base/Zurich_Population_Number_Of_Birth_By_Origin": {
+    "dataset_id": "dc/base/Zurich_Population_Number_Of_Birth_By_Origin",
+    "url": "https://www.stadt-zuerich.ch/content/dam/web/de/politik-verwaltung/statistik-und-daten/linked-open-data/datacommons/bev_4031_hel_wiki.csv",
+    "matched_folder": "scripts/eurostat/regional_statistics_by_nuts/birth_death_migration",
+    "confidence": "medium",
+    "dataset_name": "https://www.stadt-zuerich.ch/content/dam/web/de/politik-verwaltung/statistik-und-daten/linked-open-data/datacommons/bev_4031_hel_wiki.csv",
+    "reason": "The dataset contains birth data, and the eurostat folder deals with birth, death, and migration statistics."
+  },
+  "dc/base/UNEnergy": {
+    "dataset_id": "dc/base/UNEnergy",
+    "url": "https://unstats.un.org/unsd/energystats/data/",
+    "matched_folder": "scripts/un/energy/test_data",
+    "confidence": "high",
+    "dataset_name": "UNSD &mdash; Energy Statistics",
+    "reason": "The dataset ID contains 'UNEnergy' and the source URL is from unstats.un.org, which strongly suggests it belongs in the scripts/un/energy folder."
+  },
+  "dc/base/Zurich_Population_Number_Of_Birth": {
+    "dataset_id": "dc/base/Zurich_Population_Number_Of_Birth",
+    "url": "https://www.stadt-zuerich.ch/content/dam/web/de/politik-verwaltung/statistik-und-daten/linked-open-data/datacommons/bev_4031_wiki.csv",
+    "matched_folder": "statvar_imports/child_birth",
+    "confidence": "medium",
+    "dataset_name": "https://www.stadt-zuerich.ch/content/dam/web/de/politik-verwaltung/statistik-und-daten/linked-open-data/datacommons/bev_4031_wiki.csv",
+    "reason": "The dataset ID and URL suggest it's about the number of births, which aligns with the `statvar_imports/child_birth` folder."
+  },
+  "dc/base/New_Zealand_Census": {
+    "dataset_id": "dc/base/New_Zealand_Census",
+    "url": "https://www.stats.govt.nz/",
+    "matched_folder": "statvar_imports/statistics_new_zealand/new_zealand_census",
+    "confidence": "high",
+    "dataset_name": "Home &#124; Stats NZ",
+    "reason": "The dataset ID and source URL clearly indicate that this dataset belongs to the New Zealand Census from Statistics New Zealand, matching the folder name."
+  },
+  "dc/base/Zurich_Population_Number_Of_Birth_By_Sex": {
+    "dataset_id": "dc/base/Zurich_Population_Number_Of_Birth_By_Sex",
+    "url": "https://www.stadt-zuerich.ch/content/dam/web/de/politik-verwaltung/statistik-und-daten/linked-open-data/datacommons/bev_4031_sex_wiki.csv",
+    "matched_folder": "statvar_imports/zurich/bev_4031_sex_wiki",
+    "confidence": "high",
+    "dataset_name": "https://www.stadt-zuerich.ch/content/dam/web/de/politik-verwaltung/statistik-und-daten/linked-open-data/datacommons/bev_4031_sex_wiki.csv",
+    "reason": "The dataset ID and source URL directly correspond to an existing Zurich folder for bev_4031_sex_wiki."
+  },
+  "dc/base/CensusSAIPE": {
+    "dataset_id": "dc/base/CensusSAIPE",
+    "url": "https://www.census.gov/programs-surveys/saipe.html",
+    "matched_folder": "scripts/us_census",
+    "confidence": "high",
+    "dataset_name": "Small Area Income and Poverty Estimates (SAIPE) Program",
+    "reason": "The dataset is from the US Census Bureau, and the SAIPE program estimates income and poverty, aligning with the general scope of the us_census folder."
+  },
+  "dc/base/BEA_USStatesQuarterlyGDP": {
+    "dataset_id": "dc/base/BEA_USStatesQuarterlyGDP",
+    "url": "https://www.bea.gov/data/gdp/gdp-state",
+    "matched_folder": "scripts/us_bea/states_gdp",
+    "confidence": "high",
+    "dataset_name": "GDP by State | U.S. Bureau of Economic Analysis (BEA)",
+    "reason": "The dataset ID and source URL clearly indicate that this dataset contains US states' GDP data from the BEA, which aligns perfectly with the folder name."
+  },
+  "dc/base/USBTS_Tract_Household_Transportation": {
+    "dataset_id": "dc/base/USBTS_Tract_Household_Transportation",
+    "url": "https://www.bts.dot.gov/latch/latch-data",
+    "matched_folder": "scripts/us_bts/latch",
+    "confidence": "high",
+    "dataset_name": "https://www.bts.dot.gov/latch/latch-data",
+    "reason": "The dataset ID and source URL clearly indicate that this data belongs to the US BTS LATCH dataset."
+  },
+  "dc/base/US_CPI": {
+    "dataset_id": "dc/base/US_CPI",
+    "url": "https://www.bls.gov/cpi/",
+    "matched_folder": "scripts/us_bls/cpi",
+    "confidence": "high",
+    "dataset_name": "https://www.bls.gov/cpi/",
+    "reason": "The dataset ID and source URL both clearly indicate that this dataset is related to the US Bureau of Labor Statistics (BLS) Consumer Price Index (CPI), matching the folder name."
+  },
+  "dc/base/BLS_CPI_Category": {
+    "dataset_id": "dc/base/BLS_CPI_Category",
+    "url": "https://www.bls.gov/cpi/",
+    "matched_folder": "statvar_imports/us_bls/cpi_category",
+    "confidence": "high",
+    "dataset_name": "https://www.bls.gov/cpi/",
+    "reason": "The dataset ID contains 'BLS_CPI_Category' and the URL is from bls.gov, matching the folder name 'statvar_imports/us_bls/cpi_category'."
+  },
+  "dc/base/EarthquakeUSGS": {
+    "dataset_id": "dc/base/EarthquakeUSGS",
+    "url": "https://earthquake.usgs.gov/",
+    "matched_folder": "scripts/us_gs/earthquake",
+    "confidence": "high",
+    "dataset_name": "USGS Earthquake Hazards Program",
+    "reason": "The dataset ID, URL domain, and page title all strongly suggest this folder."
+  },
+  "dc/base/BLS_CPI": {
+    "dataset_id": "dc/base/BLS_CPI",
+    "url": "https://www.bls.gov/cpi/",
+    "matched_folder": "scripts/us_bls/cpi",
+    "confidence": "high",
+    "dataset_name": "https://www.bls.gov/cpi/",
+    "reason": "The dataset ID contains BLS_CPI, the URL is bls.gov/cpi/, and the available folder scripts/us_bls/cpi matches these tokens."
+  },
+  "dc/base/USCensusPEP_By_SexRaceHispanicOrigin": {
+    "dataset_id": "dc/base/USCensusPEP_By_SexRaceHispanicOrigin",
+    "url": "https://www.census.gov/programs-surveys/popest.html",
+    "matched_folder": "scripts/us_census/pep/us_pep_sexrace",
+    "confidence": "high",
+    "dataset_name": "Population and Housing Unit Estimates",
+    "reason": "The dataset ID and source URL strongly suggest US Census Population Estimates by Sex and Race, which aligns with the folder name."
+  },
+  "dc/base/USCensusGeos_SurfaceArea": {
+    "dataset_id": "dc/base/USCensusGeos_SurfaceArea",
+    "url": "https://www.census.gov/geographies/reference-files.html",
+    "matched_folder": "scripts/us_census/geo",
+    "confidence": "high",
+    "dataset_name": "Census Reference Files",
+    "reason": "The dataset ID includes 'USCensusGeos' and the source URL is from census.gov, suggesting it relates to US Census geographic data, which aligns with the 'scripts/us_census/geo' folder."
+  },
+  "dc/base/USCensusPEP_PopulationEstimatebyRace": {
+    "dataset_id": "dc/base/USCensusPEP_PopulationEstimatebyRace",
+    "url": "https://www.census.gov/programs-surveys/popest.html",
+    "matched_folder": "scripts/us_census/pep/population_estimate_by_race",
+    "confidence": "high",
+    "dataset_name": "Population and Housing Unit Estimates",
+    "reason": "The dataset ID and source URL strongly suggest this folder as it is specifically for US Census Population Estimates by Race from the PEP program."
+  },
+  "dc/base/CensusPEP": {
+    "dataset_id": "dc/base/CensusPEP",
+    "url": "https://www.census.gov/programs-surveys/popest.html",
+    "matched_folder": "scripts/us_census/pep",
+    "confidence": "high",
+    "dataset_name": "Population and Housing Unit Estimates",
+    "reason": "The dataset ID contains 'CensusPEP', the URL is from census.gov, and the page title is 'Population and Housing Unit Estimates', all pointing to the 'scripts/us_census/pep' folder."
+  },
+  "dc/base/USCensusPEP_By_Sex_Race": {
+    "dataset_id": "dc/base/USCensusPEP_By_Sex_Race",
+    "url": "https://www.census.gov/programs-surveys/popest.html",
+    "matched_folder": "scripts/us_census/pep/us_pep_sexrace",
+    "confidence": "high",
+    "dataset_name": "Population and Housing Unit Estimates",
+    "reason": "The dataset ID and source URL strongly suggest that this dataset belongs to the US Census Population Estimates Program (PEP) and contains data by sex and race, which aligns perfectly with the folder name."
+  },
+  "dc/base/USCensusPEP_Annual_Population": {
+    "dataset_id": "dc/base/USCensusPEP_Annual_Population",
+    "url": "https://www.census.gov/programs-surveys/popest.html",
+    "matched_folder": "scripts/us_census/pep/annual_population",
+    "confidence": "high",
+    "dataset_name": "Population and Housing Unit Estimates",
+    "reason": "The dataset ID and source URL clearly indicate that this is annual population data from the US Census PEP, matching the folder name."
+  },
+  "dc/base/USCensusPEP_AgeSexRace": {
+    "dataset_id": "dc/base/USCensusPEP_AgeSexRace",
+    "url": "https://www2.census.gov/programs-surveys/popest/tables",
+    "matched_folder": "scripts/us_census/pep/us_pep_sexrace",
+    "confidence": "high",
+    "dataset_name": "https://www2.census.gov/programs-surveys/popest/tables",
+    "reason": "The dataset ID `dc/base/USCensusPEP_AgeSexRace` and the source URL from the US Census Population Estimates Program (PEP) strongly suggest that `scripts/us_census/pep/us_pep_sexrace` is the best match."
+  },
+  "dc/base/USCensusPEP_AgeSexRaceHispanicOrigin": {
+    "dataset_id": "dc/base/USCensusPEP_AgeSexRaceHispanicOrigin",
+    "url": "https://www2.census.gov/programs-surveys/popest/tables",
+    "matched_folder": "scripts/us_census/pep/us_pep_sexrace",
+    "confidence": "high",
+    "dataset_name": "https://www2.census.gov/programs-surveys/popest/tables",
+    "reason": "The dataset ID and source URL strongly suggest that the data is related to US Census Population Estimates Program (PEP) data broken down by age, sex, race, and Hispanic origin, which aligns well with the folder name."
+  },
+  "dc/base/USCensusPEP_MonthlyPopulation": {
+    "dataset_id": "dc/base/USCensusPEP_MonthlyPopulation",
+    "url": "https://www.census.gov/programs-surveys/popest.html",
+    "matched_folder": "scripts/us_census/pep/monthly_population_estimate",
+    "confidence": "high",
+    "dataset_name": "Population and Housing Unit Estimates",
+    "reason": "The dataset ID and source URL clearly indicate that this is a US Census monthly population estimate, matching the folder name."
+  },
+  "dc/base/NCHS_BRFSS_Asthma": {
+    "dataset_id": "dc/base/NCHS_BRFSS_Asthma",
+    "url": "https://www.cdc.gov/asthma/brfss/default.htm",
+    "matched_folder": "statvar_imports/brfss_nchs_asthma_prevalence",
+    "confidence": "high",
+    "dataset_name": "Behavioral Risk Factor Surveillance System (BRFSS) Prevalence Data | CDC",
+    "reason": "The dataset ID and source URL strongly suggest a match with the brfss_nchs_asthma_prevalence folder."
+  },
+  "dc/base/CensusSAHIE": {
+    "dataset_id": "dc/base/CensusSAHIE",
+    "url": "https://www.census.gov/programs-surveys/sahie.html",
+    "matched_folder": "scripts/us_census",
+    "confidence": "high",
+    "dataset_name": "Small Area Health Insurance Estimates (SAHIE) Program",
+    "reason": "The dataset is from the US Census Bureau, so it should be placed under the `scripts/us_census` directory."
+  },
+  "dc/base/CDC_OzoneCensusTract": {
+    "dataset_id": "dc/base/CDC_OzoneCensusTract",
+    "url": "https://data.cdc.gov/browse?category=Environmental+Health+%26+Toxicology",
+    "matched_folder": "scripts/us_cdc/environmental_health_toxicology",
+    "confidence": "high",
+    "dataset_name": "https://data.cdc.gov/browse?category=Environmental+Health+%26+Toxicology",
+    "reason": "The dataset ID and source URL clearly indicate that this dataset belongs to the CDC's Environmental Health & Toxicology category, matching the folder name."
+  },
+  "dc/base/CDC_PM25CensusTract": {
+    "dataset_id": "dc/base/CDC_PM25CensusTract",
+    "url": "https://data.cdc.gov/browse?category=Environmental+Health+%26+Toxicology",
+    "matched_folder": "scripts/us_cdc/environmental_health_toxicology",
+    "confidence": "high",
+    "dataset_name": "https://data.cdc.gov/browse?category=Environmental+Health+%26+Toxicology",
+    "reason": "The dataset ID and source URL clearly indicate that the data originates from the CDC and falls under the category of environmental health and toxicology, matching the folder name."
+  },
+  "dc/base/CDC500_States": {
+    "dataset_id": "dc/base/CDC500_States",
+    "url": "https://www.cdc.gov/places/index.html",
+    "matched_folder": "scripts/us_cdc/500_places",
+    "confidence": "high",
+    "dataset_name": "PLACES: Local Data for Better Health | PLACES | CDC",
+    "reason": "The dataset ID and source URL clearly indicate that this dataset belongs to the CDC's 500 Cities project, which aligns with the `scripts/us_cdc/500_places` folder."
+  },
+  "dc/base/CDCWonder_NNDSS_Infectious_Weekly": {
+    "dataset_id": "dc/base/CDCWonder_NNDSS_Infectious_Weekly",
+    "url": "https://data.cdc.gov/api/views/x9gk-5huc/rows.csv?accessType=DOWNLOAD&api_foundry=true",
+    "matched_folder": "scripts/us_cdc/non_infectious_diseases/data",
+    "confidence": "medium",
+    "dataset_name": "https://data.cdc.gov/api/views/x9gk-5huc/rows.csv?accessType=DOWNLOAD&api_foundry=true",
+    "reason": "The dataset ID contains 'CDCWonder' and the URL is from cdc.gov, suggesting a CDC dataset, and while the ID also contains 'Infectious', the existing folder structure seems to separate infectious and non-infectious diseases, and 'data' is a common subfolder for data-related scripts."
+  },
+  "dc/base/GeoCoordinatesData": {
+    "dataset_id": "dc/base/GeoCoordinatesData",
+    "url": "https://www.census.gov/geographies/reference-files/time-series/geo/gazetteer-files.2018.html",
+    "matched_folder": "scripts/us_census/geojsons_low_res/simplified-data",
+    "confidence": "medium",
+    "dataset_name": "Gazetteer Files",
+    "reason": "The dataset ID contains 'GeoCoordinatesData', the URL is from census.gov, and the page title is 'Gazetteer Files', suggesting a US Census geographical dataset."
+  },
+  "dc/base/GeoCoordinatesData_Simplified": {
+    "dataset_id": "dc/base/GeoCoordinatesData_Simplified",
+    "url": "https://www.census.gov/geographies/reference-files/time-series/geo/gazetteer-files.2018.html",
+    "matched_folder": "scripts/us_census/geojsons_low_res/simplified-data",
+    "confidence": "high",
+    "dataset_name": "Gazetteer Files",
+    "reason": "The dataset ID contains 'GeoCoordinatesData_Simplified', the URL is from census.gov, and the folder name contains 'us_census', 'geojsons_low_res', and 'simplified-data'."
+  },
+  "dc/base/NCES_PrivateSchool": {
+    "dataset_id": "dc/base/NCES_PrivateSchool",
+    "url": "https://nces.ed.gov/ccd/elsi/tableGenerator.aspx",
+    "matched_folder": "scripts/us_nces/demographics/private_school",
+    "confidence": "high",
+    "dataset_name": "ELSI - Elementary and Secondary Information System",
+    "reason": "The dataset ID and source URL clearly indicate that this dataset is about private schools from NCES, matching the folder name."
+  },
+  "dc/base/ICTV_MasterSpeciesList": {
+    "dataset_id": "dc/base/ICTV_MasterSpeciesList",
+    "url": "https://ictv.global/msl",
+    "matched_folder": "scripts/biomedical/organismSpecies",
+    "confidence": "high",
+    "dataset_name": "Master Species Lists (MSL) | ICTV",
+    "reason": "The dataset ID and page title suggest a species list, which aligns with the organismSpecies folder."
+  },
+  "dc/base/India_RBIStateDomesticProduct_StatVarAgg_AggCountry": {
+    "dataset_id": "dc/base/India_RBIStateDomesticProduct_StatVarAgg_AggCountry",
+    "url": "https://rbi.org.in/",
+    "matched_folder": "statvar_imports/india_rbistatedomesticproduct",
+    "confidence": "high",
+    "dataset_name": "Home - Reserve Bank of India",
+    "reason": "The dataset ID and source URL strongly suggest this folder, as it relates to India's RBI and state domestic product."
+  },
+  "dc/base/India_RBIStateDomesticProduct_AggCountry": {
+    "dataset_id": "dc/base/India_RBIStateDomesticProduct_AggCountry",
+    "url": "https://rbi.org.in/",
+    "matched_folder": "statvar_imports/india_rbistatedomesticproduct",
+    "confidence": "high",
+    "dataset_name": "Home - Reserve Bank of India",
+    "reason": "The dataset ID and source URL strongly suggest this folder as it relates to India, RBI, and State Domestic Product."
+  },
+  "dc/base/India_RBIStateDomesticProduct_StatVarAgg": {
+    "dataset_id": "dc/base/India_RBIStateDomesticProduct_StatVarAgg",
+    "url": "https://rbi.org.in/",
+    "matched_folder": "statvar_imports/india_rbistatedomesticproduct",
+    "confidence": "high",
+    "dataset_name": "Home - Reserve Bank of India",
+    "reason": "The dataset ID contains 'India_RBIStateDomesticProduct' and the source URL is rbi.org.in, which directly corresponds to the folder name."
+  },
+  "dc/base/WikidataGeo_Zurich_ADM1": {
+    "dataset_id": "dc/base/WikidataGeo_Zurich_ADM1",
+    "url": "https://en.wikipedia.org/wiki/Subdivisions_of_Zurich",
+    "matched_folder": "statvar_imports/zurich",
+    "confidence": "medium",
+    "dataset_name": "Districts of Zurich - Wikipedia",
+    "reason": "The dataset ID and source URL indicate data related to Zurich, and the folder name 'statvar_imports/zurich' is the most general and relevant option among the provided choices."
+  },
+  "dc/base/ZurichGeoImport_ADM2": {
+    "dataset_id": "dc/base/ZurichGeoImport_ADM2",
+    "url": "https://data.stadt-zuerich.ch/dataset/geo_stadtkreise",
+    "matched_folder": "statvar_imports/zurich",
+    "confidence": "high",
+    "dataset_name": "Open Data Z\u00fcrich - Stadt Z\u00fcrich",
+    "reason": "The dataset ID and source URL clearly indicate that this dataset belongs to the Zurich statvar imports."
+  },
+  "dc/base/ZurichGeoImport_ADM3": {
+    "dataset_id": "dc/base/ZurichGeoImport_ADM3",
+    "url": "https://data.stadt-zuerich.ch/dataset/geo_stadtkreise",
+    "matched_folder": "statvar_imports/zurich",
+    "confidence": "high",
+    "dataset_name": "Open Data Z\u00fcrich - Stadt Z\u00fcrich",
+    "reason": "The dataset ID contains 'Zurich' and the source URL is from 'stadt-zuerich.ch', making the 'statvar_imports/zurich' folder the most relevant."
+  },
+  "dc/base/DeepSolar_AggCensusTract_AggCounty": {
+    "dataset_id": "dc/base/DeepSolar_AggCensusTract_AggCounty",
+    "url": "http://web.stanford.edu/group/deepsolar/home",
+    "matched_folder": "scripts/deepsolar",
+    "confidence": "high",
+    "dataset_name": "http://web.stanford.edu/group/deepsolar/home",
+    "reason": "The dataset ID contains 'DeepSolar' and the source URL is from the 'deepsolar' project at Stanford, matching the 'scripts/deepsolar' folder."
+  },
+  "dc/base/OCHAGeoCoordinates_Tonga": {
+    "dataset_id": "dc/base/OCHAGeoCoordinates_Tonga",
+    "url": "https://data.humdata.org/dataset/cod-ab-ton",
+    "matched_folder": "scripts/ocha/geodata",
+    "confidence": "high",
+    "dataset_name": "Tonga - Subnational Administrative Boundaries | Humanitarian Dataset | HDX",
+    "reason": "The dataset ID and source URL clearly indicate that this dataset is related to OCHA geodata, specifically administrative boundaries for Tonga."
+  },
+  "dc/base/OCHAGeoCoordinates_Madagascar": {
+    "dataset_id": "dc/base/OCHAGeoCoordinates_Madagascar",
+    "url": "https://data.humdata.org/dataset/whosonfirst-data-admin-mdg",
+    "matched_folder": "scripts/ocha/geodata",
+    "confidence": "high",
+    "dataset_name": "https://data.humdata.org/dataset/whosonfirst-data-admin-mdg",
+    "reason": "The dataset ID contains 'OCHAGeoCoordinates' and the URL domain is 'data.humdata.org', which aligns with the 'scripts/ocha/geodata' folder."
+  },
+  "dc/base/OCHAGeoCoordinates": {
+    "dataset_id": "dc/base/OCHAGeoCoordinates",
+    "url": "https://data.humdata.org",
+    "matched_folder": "scripts/ocha/geodata",
+    "confidence": "high",
+    "dataset_name": "Humanitarian Data Exchange | Find & Use Crisis Data | HDX",
+    "reason": "The dataset ID contains 'OCHA' and the source URL is from 'humdata.org', which aligns with the 'scripts/ocha/geodata' folder."
+  },
+  "dc/base/EarthquakeUSGS_Agg": {
+    "dataset_id": "dc/base/EarthquakeUSGS_Agg",
+    "url": "https://earthquake.usgs.gov/",
+    "matched_folder": "scripts/us_gs/earthquake",
+    "confidence": "high",
+    "dataset_name": "USGS Earthquake Hazards Program",
+    "reason": "The dataset ID and source URL clearly indicate that this dataset belongs to the USGS earthquake data, matching the folder name."
+  },
+  "dc/base/CensusACS5YearSurvey_Person_Age_StatVarAgg": {
+    "dataset_id": "dc/base/CensusACS5YearSurvey_Person_Age_StatVarAgg",
+    "url": "https://www.census.gov/",
+    "matched_folder": "statvar_imports/us_census",
+    "confidence": "high",
+    "dataset_name": "Census.gov | U.S. Census Bureau Homepage",
+    "reason": "The dataset ID contains 'Census' and the source URL is census.gov, so the us_census folder is the best match."
+  },
+  "dc/base/CensusACS5YearSurvey_HousingUnit_HomeValue_StatVarAgg": {
+    "dataset_id": "dc/base/CensusACS5YearSurvey_HousingUnit_HomeValue_StatVarAgg",
+    "url": "https://www.census.gov/",
+    "matched_folder": "statvar_imports/us_census",
+    "confidence": "high",
+    "dataset_name": "Census.gov | U.S. Census Bureau Homepage",
+    "reason": "The dataset ID and source URL clearly indicate that this data originates from the US Census Bureau."
+  },
+  "dc/base/US_UrbanOrg_Schools_Directory": {
+    "dataset_id": "dc/base/US_UrbanOrg_Schools_Directory",
+    "url": "https://educationdata.urban.org/documentation/schools.html#ccd_directory,https://www.census.gov/programs-surveys/ccd/tables/ccd-crdc-schools-directory",
+    "matched_folder": "statvar_imports/us_urban_school",
+    "confidence": "high",
+    "dataset_name": "https://educationdata.urban.org/documentation/schools.html#ccd_directory,https://www.census.gov/programs-surveys/ccd/tables/ccd-crdc-schools-directory",
+    "reason": "The dataset ID contains 'US_UrbanOrg_Schools_Directory' and the source URL is related to education data from urban.org, making 'statvar_imports/us_urban_school' the most relevant folder."
+  },
+  "dc/base/CensusACS5YearSurvey_AbilityToSpeakEnglish_StatVarAgg": {
+    "dataset_id": "dc/base/CensusACS5YearSurvey_AbilityToSpeakEnglish_StatVarAgg",
+    "url": "https://www.census.gov/",
+    "matched_folder": "statvar_imports/us_census",
+    "confidence": "high",
+    "dataset_name": "Census.gov | U.S. Census Bureau Homepage",
+    "reason": "The dataset ID contains 'Census' and the source URL is census.gov, indicating it's US Census data, which aligns with the 'statvar_imports/us_census' folder."
+  },
+  "dc/base/CensusACS5YearSurvey_SuperEnum": {
+    "dataset_id": "dc/base/CensusACS5YearSurvey_SuperEnum",
+    "url": "https://www.census.gov/",
+    "matched_folder": "scripts/us_census/acs5yr",
+    "confidence": "high",
+    "dataset_name": "Census.gov | U.S. Census Bureau Homepage",
+    "reason": "The dataset ID contains 'CensusACS5YearSurvey' which strongly suggests it belongs in the 'scripts/us_census/acs5yr' folder."
+  },
+  "dc/base/CensusACS5YearSurvey_Income_StatVarAgg": {
+    "dataset_id": "dc/base/CensusACS5YearSurvey_Income_StatVarAgg",
+    "url": "https://www.census.gov/",
+    "matched_folder": "scripts/us_census/gender_income_inequality",
+    "confidence": "low",
+    "dataset_name": "Census.gov | U.S. Census Bureau Homepage",
+    "reason": "The dataset ID contains 'CensusACS5YearSurvey' and 'Income', which aligns with the 'scripts/us_census/gender_income_inequality' folder, although the match isn't perfect."
+  },
+  "dc/base/CensusACS5YearSurvey_Employment_StatVarAgg": {
+    "dataset_id": "dc/base/CensusACS5YearSurvey_Employment_StatVarAgg",
+    "url": "https://www.census.gov/",
+    "matched_folder": "statvar_imports/us_census",
+    "confidence": "high",
+    "dataset_name": "Census.gov | U.S. Census Bureau Homepage",
+    "reason": "The dataset ID and source URL clearly indicate that this data originates from the US Census Bureau."
+  },
+  "dc/base/CensusSAHIE_AggCountry": {
+    "dataset_id": "dc/base/CensusSAHIE_AggCountry",
+    "url": "https://www.census.gov/programs-surveys/sahie.html",
+    "matched_folder": "scripts/us_census",
+    "confidence": "high",
+    "dataset_name": "Small Area Health Insurance Estimates (SAHIE) Program",
+    "reason": "The dataset is from the US Census Bureau, making scripts/us_census the most relevant folder."
+  },
+  "dc/base/NCES_SchoolDistrictStats_SuperEnum": {
+    "dataset_id": "dc/base/NCES_SchoolDistrictStats_SuperEnum",
+    "url": "https://datacommons.org/",
+    "matched_folder": "scripts/us_nces/demographics/school_district",
+    "confidence": "high",
+    "dataset_name": "Home - Data Commons",
+    "reason": "The dataset ID contains 'NCES_SchoolDistrictStats' and the URL is datacommons.org, so the folder 'scripts/us_nces/demographics/school_district' is the best match."
+  },
+  "dc/base/NCBI_Taxonomy": {
+    "dataset_id": "dc/base/NCBI_Taxonomy",
+    "url": "https://www.ncbi.nlm.nih.gov/taxonomy/",
+    "matched_folder": "scripts/biomedical/NCBI_Taxonomy",
+    "confidence": "high",
+    "dataset_name": "Home - Taxonomy - NCBI",
+    "reason": "The dataset ID and source URL directly correspond to the NCBI Taxonomy, and a folder with that name exists."
+  },
+  "dc/base/NCBI_Assembly_Summary_Reports": {
+    "dataset_id": "dc/base/NCBI_Assembly_Summary_Reports",
+    "url": "https://www.ncbi.nlm.nih.gov/assembly/",
+    "matched_folder": "scripts/biomedical/NCBI_Assembly/Summary_Report",
+    "confidence": "high",
+    "dataset_name": "Genome - NCBI - NLM",
+    "reason": "The dataset ID and source URL strongly suggest a match with the NCBI Assembly Summary Report folder."
+  },
+  "dc/base/NCES_PublicSchoolStats_SuperEnum": {
+    "dataset_id": "dc/base/NCES_PublicSchoolStats_SuperEnum",
+    "url": "https://datacommons.org/",
+    "matched_folder": "scripts/us_nces/demographics/public_school",
+    "confidence": "high",
+    "dataset_name": "Home - Data Commons",
+    "reason": "The dataset ID contains 'NCES_PublicSchoolStats' and the URL domain is datacommons.org, which aligns with the NCES public school data in the scripts folder."
+  },
+  "dc/base/WikidataGeo_Singapore": {
+    "dataset_id": "dc/base/WikidataGeo_Singapore",
+    "url": "https://en.wikipedia.org/wiki/Regions_of_Singapore",
+    "matched_folder": "statvar_imports/singapore_census",
+    "confidence": "medium",
+    "dataset_name": "Regions of Singapore - Wikipedia",
+    "reason": "The dataset ID and source URL both relate to Singapore, and the singapore_census folder is the only one related to Singapore."
+  },
+  "dc/base/MedicalSubjectHeadings": {
+    "dataset_id": "dc/base/MedicalSubjectHeadings",
+    "url": "https://meshb.nlm.nih.gov/",
+    "matched_folder": "scripts/biomedical",
+    "confidence": "high",
+    "dataset_name": "MeSH Browser",
+    "reason": "The dataset ID and source URL clearly indicate that this dataset belongs to the biomedical domain, and the MeSH Browser is a biomedical resource."
+  },
+  "dc/base/WikidataGeo_France": {
+    "dataset_id": "dc/base/WikidataGeo_France",
+    "url": "https://en.wikipedia.org/wiki/Regions_of_France",
+    "matched_folder": "statvar_imports/france_demographics",
+    "confidence": "medium",
+    "dataset_name": "Regions of France - Wikipedia",
+    "reason": "The dataset ID and source URL suggest French geographic data, aligning with the france_demographics folder."
+  },
+  "dc/base/OECDRegionalDemography_Person_Age_StatVarAgg": {
+    "dataset_id": "dc/base/OECDRegionalDemography_Person_Age_StatVarAgg",
+    "url": "https://datacommons.org/",
+    "matched_folder": "statvar_imports/oecd/regional_education",
+    "confidence": "medium",
+    "dataset_name": "Home - Data Commons",
+    "reason": "The dataset ID contains 'OECD' and the source URL is datacommons.org, suggesting it might be related to OECD data, and the folder name contains 'oecd' and 'regional', which aligns with the dataset ID."
+  },
+  "dc/base/Covid19IndiaData": {
+    "dataset_id": "dc/base/Covid19IndiaData",
+    "url": "http://projects.datameet.org/covid19/",
+    "matched_folder": "scripts/covid19_india/cases_count_states_data",
+    "confidence": "high",
+    "dataset_name": "Home - COVID-19 India Data by DataMeet",
+    "reason": "The dataset ID and source URL strongly suggest COVID-19 data for India, and the folder name 'cases_count_states_data' aligns with the likely content of the dataset."
+  },
+  "dc/base/USDA_AgricultureCensus_Agriculture_StatVarAgg": {
+    "dataset_id": "dc/base/USDA_AgricultureCensus_Agriculture_StatVarAgg",
+    "url": "https://www.nass.usda.gov/AgCensus/",
+    "matched_folder": "statvar_imports/us_census",
+    "confidence": "medium",
+    "dataset_name": "USDA - National Agricultural Statistics Service - Census of Agriculture",
+    "reason": "The dataset ID contains 'Census' and the source is a US government agency, making statvar_imports/us_census the closest match, although it's not a perfect fit as it's agricultural rather than population census."
+  },
+  "dc/base/FAO_Currency_statvar": {
+    "dataset_id": "dc/base/FAO_Currency_statvar",
+    "url": "https://www.fao.org/faostat/en/#data/PE/metadata",
+    "matched_folder": "statvar_imports/fao_currency_and_exchange_rate/fao_currency_statvar",
+    "confidence": "high",
+    "dataset_name": "FAOSTAT",
+    "reason": "The dataset ID contains 'FAO_Currency_statvar' and the source URL is from fao.org, matching the folder name and description."
+  },
+  "dc/base/IPEDS_StudentToFacultyRatio": {
+    "dataset_id": "dc/base/IPEDS_StudentToFacultyRatio",
+    "url": "https://nces.ed.gov/ipeds/datacenter/DataFiles.aspx?gotoReportId=7&fromIpeds=true&sid=859539d0-db09-4d03-a36a-eabf93d07355&rtid=1",
+    "matched_folder": "statvar_imports/ipeds/student_to_faculty_ratio",
+    "confidence": "high",
+    "dataset_name": "https://nces.ed.gov/ipeds/datacenter/DataFiles.aspx?gotoReportId=7&fromIpeds=true&sid=859539d0-db09-4d03-a36a-eabf93d07355&rtid=1",
+    "reason": "The dataset ID contains 'IPEDS_StudentToFacultyRatio' which directly corresponds to the folder name 'statvar_imports/ipeds/student_to_faculty_ratio'."
+  },
+  "dc/base/MexicoCensus": {
+    "dataset_id": "dc/base/MexicoCensus",
+    "url": "https://www.inegi.org.mx/temas/",
+    "matched_folder": "statvar_imports/mexico_subnational_population_statistics/mexico_census_aa2",
+    "confidence": "high",
+    "dataset_name": "https://www.inegi.org.mx/temas/",
+    "reason": "The dataset ID and source URL clearly indicate a Mexico census dataset, and the folder name explicitly mentions Mexico census data."
+  },
+  "dc/base/USMonthlyRetailSales": {
+    "dataset_id": "dc/base/USMonthlyRetailSales",
+    "url": "https://www.census.gov/retail/index.html",
+    "matched_folder": "statvar_imports/us_census/us_monthly_retail_sales",
+    "confidence": "high",
+    "dataset_name": "Monthly Retail Trade - Main Page",
+    "reason": "The dataset ID and source URL strongly suggest this folder as it directly relates to US Census monthly retail sales data."
+  },
+  "dc/base/CensusACS5YearSurvey_SubjectTables_S1301": {
+    "dataset_id": "dc/base/CensusACS5YearSurvey_SubjectTables_S1301",
+    "url": "https://data.census.gov/cedsci/table?q=S1301&tid=ACSST5Y2023.S1301",
+    "matched_folder": "scripts/us_census/acs5yr/subject_tables",
+    "confidence": "high",
+    "dataset_name": "Explore Census Data",
+    "reason": "The dataset ID and source URL clearly indicate that this is a US Census ACS 5-year survey subject table, matching the folder name."
+  },
+  "dc/base/CensusACS1YearSurvey": {
+    "dataset_id": "dc/base/CensusACS1YearSurvey",
+    "url": "https://www.census.gov/programs-surveys/acs/data/data-via-ftp.html",
+    "matched_folder": "scripts/us_census/acs5yr",
+    "confidence": "high",
+    "dataset_name": "American Community Survey Data via FTP",
+    "reason": "The dataset ID and source URL clearly indicate that this data comes from the US Census Bureau's American Community Survey (ACS), and the `scripts/us_census/acs5yr` folder is the most relevant existing location."
+  },
+  "dc/base/CensusACS5YearSurvey_SubjectTables_S2408": {
+    "dataset_id": "dc/base/CensusACS5YearSurvey_SubjectTables_S2408",
+    "url": "https://data.census.gov/cedsci/table?q=S2408&tid=ACSST5Y2023.S2408",
+    "matched_folder": "scripts/us_census/acs5yr/subject_tables",
+    "confidence": "high",
+    "dataset_name": "Explore Census Data",
+    "reason": "The dataset ID and source URL clearly indicate that this is a US Census ACS 5-year survey subject table, matching the folder name."
+  },
+  "dc/base/USEconomicCensus": {
+    "dataset_id": "dc/base/USEconomicCensus",
+    "url": "https://www.census.gov/programs-surveys/economic-census.html",
+    "matched_folder": "scripts/us_census",
+    "confidence": "high",
+    "dataset_name": "Economic Census",
+    "reason": "The dataset is from the US Census Bureau, and the folder `scripts/us_census` is the most general folder for US Census data."
+  },
+  "dc/base/USDecennialCensus_RedistrictingRelease": {
+    "dataset_id": "dc/base/USDecennialCensus_RedistrictingRelease",
+    "url": "https://www.census.gov/programs-surveys/decennial-census/about/rdo/summary-files.html",
+    "matched_folder": "scripts/us_census/decennial",
+    "confidence": "high",
+    "dataset_name": "Decennial Census P.L. 94-171 Redistricting Data Summary Files",
+    "reason": "The dataset ID and page title both clearly indicate that this is US Decennial Census data, making scripts/us_census/decennial the best match."
+  },
+  "dc/base/CDC500": {
+    "dataset_id": "dc/base/CDC500",
+    "url": "https://www.cdc.gov/places/index.html",
+    "matched_folder": "scripts/us_cdc/500_places",
+    "confidence": "high",
+    "dataset_name": "PLACES: Local Data for Better Health | PLACES | CDC",
+    "reason": "The dataset ID dc/base/CDC500 and the source URL cdc.gov strongly suggest a match with the scripts/us_cdc/500_places folder."
+  },
+  "dc/base/CDCPM25": {
+    "dataset_id": "dc/base/CDCPM25",
+    "url": "https://data.cdc.gov/Environmental-Health-Toxicology/Daily-PM2-5-Concentrations-All-County-2001-2016/7vdq-ztk9",
+    "matched_folder": "scripts/us_cdc/environmental_health_toxicology",
+    "confidence": "high",
+    "dataset_name": "https://data.cdc.gov/Environmental-Health-Toxicology/Daily-PM2-5-Concentrations-All-County-2001-2016/7vdq-ztk9",
+    "reason": "The dataset ID and source URL both point to CDC Environmental Health Toxicology data, matching the folder name."
+  },
+  "dc/base/CDCWonder_NNDSS_InfectiousAnnual": {
+    "dataset_id": "dc/base/CDCWonder_NNDSS_InfectiousAnnual",
+    "url": "https://wonder.cdc.gov/nndss/nndss_annual_tables_menu.asp",
+    "matched_folder": "scripts/us_cdc/non_infectious_diseases",
+    "confidence": "medium",
+    "dataset_name": "https://wonder.cdc.gov/nndss/nndss_annual_tables_menu.asp",
+    "reason": "The dataset ID contains 'CDC' and the URL domain is 'cdc.gov', suggesting a CDC-related script, and while the page title mentions infectious diseases, the existing folder structure for CDC data focuses on non-infectious diseases, making it the closest match."
+  },
+  "ec_europa_eu_eurostat_web_main_data_database": {
+    "dataset_id": "ec_europa_eu_eurostat_web_main_data_database",
+    "url": "https://ec.europa.eu/eurostat/web/main/data/database",
+    "matched_folder": "scripts/eurostat",
+    "confidence": "high",
+    "dataset_name": "Database - Eurostat",
+    "reason": "The dataset ID and source URL clearly indicate Eurostat as the data source, and the page title confirms it's a database from Eurostat, making the 'scripts/eurostat' folder the most appropriate match."
+  },
+  "developers_google_com_earth_engine_datasets_catalog_google_d": {
+    "dataset_id": "developers_google_com_earth_engine_datasets_catalog_google_d",
+    "url": "https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_DYNAMICWORLD_V1",
+    "matched_folder": "scripts/google_datasets",
+    "confidence": "medium",
+    "dataset_name": "Dynamic World V1 &nbsp;|&nbsp; Earth Engine Data Catalog &nbsp;|&nbsp; Google for Developers",
+    "reason": "The dataset ID and source URL indicate a Google dataset, making scripts/google_datasets the most relevant folder."
+  },
+  "www_google_com_covid19_mobility": {
+    "dataset_id": "www_google_com_covid19_mobility",
+    "url": "https://www.google.com/covid19/mobility/",
+    "matched_folder": "scripts/google_covid/mobility",
+    "confidence": "high",
+    "dataset_name": "COVID-19 Community Mobility Reports",
+    "reason": "The dataset ID, source URL, and page title all strongly suggest this dataset belongs in the google_covid/mobility folder."
+  }
+}

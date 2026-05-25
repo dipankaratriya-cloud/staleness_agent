@@ -7,7 +7,7 @@ import os
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dotenv import load_dotenv
-from phase1_url_matcher import match_url
+from phase1_gemini_matcher import match_url   # fast path; revert: phase1_url_matcher
 
 load_dotenv()
 

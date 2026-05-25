@@ -392,6 +392,79 @@ def _drain(proc, log, counter: list) -> str:
     return "".join(streamed_chunks)
 
 
+# ─── Fast-path: Strategy 1+2 without pi ──────────────────────────────────────
+
+def _fast_download(dataset_id: str, repo_folder: str, source_url: str,
+                   output_dir: str) -> dict | None:
+    """Try manifest download URL (S1) then direct link scraping (S2) in pure Python.
+    Returns a result dict on success, or None to fall through to the pi agent."""
+    import base64
+    import urllib.request
+    from urllib.parse import urljoin
+
+    token = os.environ.get("GITHUB_TOKEN", "")
+
+    # ── Strategy 1: manifest.json → downloadUrls ─────────────────────────────
+    if repo_folder and repo_folder not in ("unknown", ""):
+        try:
+            api_url = (f"https://api.github.com/repos/datacommonsorg/data/contents/"
+                       f"{repo_folder}/manifest.json")
+            req = urllib.request.Request(
+                api_url, headers={"Authorization": f"token {token}"}
+            )
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                blob = json.loads(resp.read())
+            manifest = json.loads(base64.b64decode(blob["content"]).decode())
+            dl_urls = (manifest.get("downloadUrls")
+                       or manifest.get("importUrl")
+                       or manifest.get("dataDownloadUrl"))
+            if isinstance(dl_urls, str):
+                dl_urls = [dl_urls]
+            for dl_url in (dl_urls or [])[:3]:
+                fname    = os.path.basename(dl_url.split("?")[0]) or "data"
+                out_path = os.path.join(output_dir, fname)
+                r = subprocess.run(
+                    ["wget", "-q", "--timeout=60", "-O", out_path, dl_url],
+                    timeout=90
+                )
+                if r.returncode == 0 and os.path.exists(out_path) and os.path.getsize(out_path) > 1024:
+                    print(f"  [fast-s1] ✅ manifest download succeeded")
+                    return {"status": "success", "file": out_path,
+                            "all_files": [out_path], "strategy": "1", "rounds_taken": 0}
+        except Exception:
+            pass
+
+    # ── Strategy 2: regex scrape source URL for direct file links ─────────────
+    try:
+        req = urllib.request.Request(source_url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            html = resp.read(80000).decode("utf-8", errors="ignore")
+        links = []
+        for pat in [
+            r'href=["\']([^"\']+\.(?:csv|zip|xlsx|tsv|gz|xls|parquet|json)[^"\']*)',
+            r'(https?://[^\s"\'<>]+\.(?:csv|zip|xlsx|tsv|gz|parquet))',
+        ]:
+            links.extend(re.findall(pat, html, re.I))
+        links = [urljoin(source_url, l) for l in links[:5]]
+        for dl_url in links:
+            fname = os.path.basename(dl_url.split("?")[0]) or "data"
+            if not os.path.splitext(fname)[1]:
+                fname += ".csv"
+            out_path = os.path.join(output_dir, fname)
+            r = subprocess.run(
+                ["wget", "-q", "--timeout=60", "-O", out_path, dl_url],
+                timeout=90
+            )
+            if r.returncode == 0 and os.path.exists(out_path) and os.path.getsize(out_path) > 1024:
+                print(f"  [fast-s2] ✅ direct link download succeeded")
+                return {"status": "success", "file": out_path,
+                        "all_files": [out_path], "strategy": "2", "rounds_taken": 0}
+    except Exception:
+        pass
+
+    return None  # pi agent fallback
+
+
 # ─── Core runner ──────────────────────────────────────────────────────────────
 
 def _run_agent(prompt: str, log, counter: list, timeout: int) -> str:
@@ -421,7 +494,7 @@ TERMINAL_CODES = {"auth_required", "paywall"}
 
 
 def download_dataset(dataset_id: str, repo_folder: str, source_url: str,
-                     timeout: int = ROUND_TIMEOUT) -> dict:
+                     timeout: int = ROUND_TIMEOUT, force: bool = False) -> dict:
     os.makedirs(LOGS_DIR, exist_ok=True)
     os.makedirs(DATASETS_DIR, exist_ok=True)
 
@@ -434,7 +507,7 @@ def download_dataset(dataset_id: str, repo_folder: str, source_url: str,
 
     # ── Idempotency: skip if already downloaded in a previous run ─────────────
     existing = _check_output_dir(output_dir)
-    if existing:
+    if existing and not force:
         primary = existing[0]
         file_format = os.path.splitext(primary)[1].lstrip(".").lower()
         print(f"  [skip] already downloaded: {os.path.relpath(primary, BASE_DIR)}")
@@ -462,6 +535,17 @@ def download_dataset(dataset_id: str, repo_folder: str, source_url: str,
     result = {}
     counter = [0]
     t_start = time.time()
+
+    # ── Fast-path: try Strategy 1+2 without pi ────────────────────────────────
+    fast = _fast_download(dataset_id, repo_folder, source_url, output_dir)
+    if fast:
+        download_time_sec = round(time.time() - t_start, 1)
+        primary_file = fast.get("file", "")
+        file_format  = os.path.splitext(primary_file)[1].lstrip(".").lower() if primary_file else ""
+        return {**fast, "output_dir": output_dir, "dataset_id": dataset_id,
+                "download_time_sec": download_time_sec,
+                "download_strategy": f"fast_s{fast.get('strategy','1')}",
+                "file_format": file_format}
 
     with open(log_path, "w") as log:
         log.write(

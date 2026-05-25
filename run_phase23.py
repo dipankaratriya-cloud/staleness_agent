@@ -62,7 +62,7 @@ def load_entries(input_path: str) -> list[dict]:
     return entries
 
 
-def run_one(entry: dict) -> dict:
+def run_one(entry: dict, force: bool = False) -> dict:
     dataset_id = entry["dataset_id"]
     url = entry["url"]
     repo_folder = entry.get("matched_folder") or ""
@@ -70,9 +70,9 @@ def run_one(entry: dict) -> dict:
     print(f"[{dataset_id}]")
     print(f"  url    : {url}")
     print(f"  folder : {repo_folder or '(none)'}")
-    print(f"  status : running pi agent...")
+    print(f"  status : downloading...")
 
-    result = download_dataset(dataset_id, repo_folder, url)
+    result = download_dataset(dataset_id, repo_folder, url, force=force)
 
     if result.get("status") == "success":
         print(f"  done   : {result.get('file')}")
@@ -88,6 +88,7 @@ def main():
     parser.add_argument("--limit", type=int, default=None, help="Process only first N")
     parser.add_argument("--workers", type=int, default=2, help="Parallel pi sessions (default: 2)")
     parser.add_argument("--resume", action="store_true", help="Skip already-processed datasets")
+    parser.add_argument("--force",  action="store_true", help="Re-download even if files already exist on disk")
     args = parser.parse_args()
 
     if not os.path.exists(args.input):
@@ -108,7 +109,7 @@ def main():
     print(f"[phase23] processing {len(entries)} datasets with {args.workers} workers\n")
 
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
-        futures = {pool.submit(run_one, entry): entry for entry in entries}
+        futures = {pool.submit(run_one, entry, args.force): entry for entry in entries}
         for future in as_completed(futures):
             entry = futures[future]
             try:

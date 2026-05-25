@@ -11,11 +11,13 @@ Changes vs original:
 - Better parse_error recovery: scan full agent output, not just last 300 chars.
 """
 
+import gc
 import json
 import os
 import re
 import subprocess
 import threading
+from collections import deque
 from datetime import datetime
 from dotenv import load_dotenv
 
@@ -339,8 +341,13 @@ def _format_event(event: dict) -> str | None:
     return None
 
 
+_MAX_STREAM_BYTES = 512 * 1024  # cap streamed text at 512 KB to prevent memory growth
+
 def _drain(proc, log, counter: list) -> str:
-    streamed = []
+    # Use a deque to cap total streamed text in memory
+    streamed_chunks: deque[str] = deque()
+    streamed_len = 0
+
     for line in proc.stdout:
         if not line.strip():
             continue
@@ -357,7 +364,10 @@ def _drain(proc, log, counter: list) -> str:
                 counter[0] += 1
                 log.write(f"\n[tool call #{counter[0]}]\n")
             elif ae.get("type") == "text_delta":
-                streamed.append(ae.get("delta", ""))
+                delta = ae.get("delta", "")
+                if streamed_len < _MAX_STREAM_BYTES:
+                    streamed_chunks.append(delta)
+                    streamed_len += len(delta)
 
         readable = _format_event(event)
         if readable:
@@ -367,7 +377,7 @@ def _drain(proc, log, counter: list) -> str:
         if etype != "agent_end":
             continue
 
-        full = "".join(streamed)
+        full = "".join(streamed_chunks)
         if '"status"' not in full:
             parts = []
             for msg in event.get("messages", []):
@@ -378,7 +388,7 @@ def _drain(proc, log, counter: list) -> str:
             full = full + "\n" + "\n".join(parts)
         return full
 
-    return "".join(streamed)
+    return "".join(streamed_chunks)
 
 
 # ─── Core runner ──────────────────────────────────────────────────────────────
@@ -497,6 +507,8 @@ def download_dataset(dataset_id: str, repo_folder: str, source_url: str,
                 log.write(f"[feedback-loop] ⟳ round {round_num} failed — spawning correction round {round_num+1}\n")
             else:
                 log.write(f"[feedback-loop] ✗ all {MAX_CORRECTION_ROUNDS} rounds exhausted\n")
+
+            gc.collect()  # release memory between rounds
 
         log.write(
             f"\n{'='*40}\n"

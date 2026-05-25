@@ -11,9 +11,12 @@ import argparse
 import json
 import os
 import sys
+import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dotenv import load_dotenv
 from phase23_downloader import download_dataset
+
+_save_lock = threading.Lock()
 
 load_dotenv()
 
@@ -40,7 +43,7 @@ def load_entries(input_path: str) -> list[dict]:
         import csv
         with open(input_path, newline="", encoding="utf-8") as f:
             for row in csv.DictReader(f):
-                dataset_id = (row.get("id") or row.get("prov_id") or "").strip()
+                dataset_id = (row.get("dataset_id") or row.get("id") or row.get("prov_id") or "").strip()
                 url = (row.get("provenance_url") or row.get("url") or "").strip()
                 if dataset_id and url:
                     entries.append({"dataset_id": dataset_id, "url": url,
@@ -110,16 +113,19 @@ def main():
             entry = futures[future]
             try:
                 result = future.result()
-                results[result["dataset_id"]] = result
+                did = result["dataset_id"]
             except Exception as e:
-                results[entry["dataset_id"]] = {
+                result = {
                     "dataset_id": entry["dataset_id"],
                     "url": entry["url"],
                     "status": "failure",
                     "failure_code": "exception",
                     "reason": str(e),
                 }
-            save_json(PHASE23_RESULTS_FILE, results)
+                did = entry["dataset_id"]
+            with _save_lock:
+                results[did] = result
+                save_json(PHASE23_RESULTS_FILE, results)
 
     succeeded = sum(1 for r in results.values()
                     if isinstance(r, dict) and r.get("status") == "success")

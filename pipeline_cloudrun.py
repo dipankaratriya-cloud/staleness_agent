@@ -42,22 +42,29 @@ def load_json(path):
 
 
 def count_rows(filepath: str) -> int | None:
-    """Count rows in a CSV/TSV/Excel file. Returns None if not countable."""
+    """Count rows without loading the full file into memory."""
     if not filepath or not os.path.exists(filepath):
         return None
     ext = os.path.splitext(filepath)[1].lower()
     try:
-        import pandas as pd
-        if ext in (".csv", ".tsv", ".gz"):
-            sep = "\t" if ext == ".tsv" else ","
-            df = pd.read_csv(filepath, sep=sep, nrows=None, low_memory=False)
-            return len(df)
+        if ext in (".csv", ".tsv"):
+            # Stream line-by-line — never loads full file into RAM
+            with open(filepath, "rb") as f:
+                return sum(1 for _ in f) - 1  # subtract header row
+        elif ext == ".gz":
+            import gzip
+            with gzip.open(filepath, "rb") as f:
+                return sum(1 for _ in f) - 1
         elif ext in (".xlsx", ".xls"):
-            df = pd.read_excel(filepath, nrows=None)
-            return len(df)
+            import openpyxl
+            wb = openpyxl.load_workbook(filepath, read_only=True, data_only=True)
+            ws = wb.active
+            count = ws.max_row - 1
+            wb.close()
+            return count
         elif ext == ".parquet":
-            df = pd.read_parquet(filepath)
-            return len(df)
+            import pyarrow.parquet as pq
+            return pq.read_metadata(filepath).num_rows
     except Exception:
         pass
     return None

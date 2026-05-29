@@ -287,36 +287,65 @@ def get_datcom_previous() -> dict:
 
 
 def get_successful_obs_datasets() -> dict[str, str]:
-    """Return {dataset_id: source_url} for datasets that have a confirmed obs date.
-    Drawn from the most recent row per dataset in delta_results.
-    Empty dict on first run or if BQ is unreachable.
+    """Return {dataset_id: source_url} for datasets with a confirmed obs date.
+    Tries delta_results first (our own history); falls back to datcom_import_list
+    (always populated) so the pipeline never needs local files on Cloud Run.
     """
-    query = f"""
-        SELECT dataset_id, source_url
-        FROM `{_table("delta_results")}`
-        WHERE last_obs_date IS NOT NULL
-        QUALIFY ROW_NUMBER() OVER (PARTITION BY dataset_id ORDER BY run_date DESC) = 1
-    """
+    # Own history (run 2+)
     try:
-        return {row.dataset_id: row.source_url for row in _bq().query(query).result()}
+        rows = list(_bq().query(f"""
+            SELECT dataset_id, source_url
+            FROM `{_table("delta_results")}`
+            WHERE last_obs_date IS NOT NULL
+            QUALIFY ROW_NUMBER() OVER (PARTITION BY dataset_id ORDER BY run_date DESC) = 1
+        """).result())
+        if rows:
+            print(f"  [bq] obs input: {len(rows)} datasets from delta_results")
+            return {r.dataset_id: r.source_url for r in rows}
+    except Exception:
+        pass
+    # First-run fallback: datcom_import_list (cross-project, always available)
+    try:
+        rows = list(_bq().query(f"""
+            SELECT dataset_id, provenance_url
+            FROM `{DATCOM_TABLE}`
+            WHERE latestObservationDate IS NOT NULL
+            QUALIFY ROW_NUMBER() OVER (PARTITION BY dataset_id ORDER BY latestObservationDate DESC NULLS LAST) = 1
+        """).result())
+        print(f"  [bq] obs input: {len(rows)} datasets from datcom_import_list (first run)")
+        return {r.dataset_id: r.provenance_url for r in rows}
     except Exception as e:
         print(f"  [bq] get_successful_obs_datasets failed: {e}")
         return {}
 
 
 def get_successful_refresh_datasets() -> dict[str, str]:
-    """Return {dataset_id: source_url} for datasets that have a confirmed refresh date.
-    Drawn from the most recent row per dataset in delta_results.
-    Empty dict on first run or if BQ is unreachable.
+    """Return {dataset_id: source_url} for datasets with a confirmed refresh date.
+    Tries delta_results first; falls back to datcom_import_list on first run.
     """
-    query = f"""
-        SELECT dataset_id, source_url
-        FROM `{_table("delta_results")}`
-        WHERE last_refresh_date IS NOT NULL
-        QUALIFY ROW_NUMBER() OVER (PARTITION BY dataset_id ORDER BY run_date DESC) = 1
-    """
+    # Own history (run 2+)
     try:
-        return {row.dataset_id: row.source_url for row in _bq().query(query).result()}
+        rows = list(_bq().query(f"""
+            SELECT dataset_id, source_url
+            FROM `{_table("delta_results")}`
+            WHERE last_refresh_date IS NOT NULL
+            QUALIFY ROW_NUMBER() OVER (PARTITION BY dataset_id ORDER BY run_date DESC) = 1
+        """).result())
+        if rows:
+            print(f"  [bq] refresh input: {len(rows)} datasets from delta_results")
+            return {r.dataset_id: r.source_url for r in rows}
+    except Exception:
+        pass
+    # First-run fallback: datcom_import_list
+    try:
+        rows = list(_bq().query(f"""
+            SELECT dataset_id, provenance_url
+            FROM `{DATCOM_TABLE}`
+            WHERE lastDataRefreshDate IS NOT NULL
+            QUALIFY ROW_NUMBER() OVER (PARTITION BY dataset_id ORDER BY lastDataRefreshDate DESC NULLS LAST) = 1
+        """).result())
+        print(f"  [bq] refresh input: {len(rows)} datasets from datcom_import_list (first run)")
+        return {r.dataset_id: r.provenance_url for r in rows}
     except Exception as e:
         print(f"  [bq] get_successful_refresh_datasets failed: {e}")
         return {}

@@ -264,24 +264,27 @@ def _local_refresh_datasets() -> dict[str, str]:
 
 def _run_refresh_pipeline(run_id: str, input_csv: str, resume: bool):
     """Runs in a background thread: extract refresh dates → upload to BQ."""
-    print(f"\n[refresh] ▶ starting provenance refresh date extraction")
-    t0 = time.time()
-    cmd = [
-        "python3", "provenance_refresh_extractor.py",
-        "--csv",    input_csv,
-        "--output", REFRESH_DATES_FILE,
-        "--resume",
-    ]
-    r = subprocess.run(cmd, cwd=BASE_DIR)
-    elapsed = round(time.time() - t0, 1)
-    if r.returncode != 0:
-        print(f"[refresh] ✗ extractor failed (exit {r.returncode}) — skipping BQ upload")
-        return
-    print(f"[refresh] ✓ extraction done ({elapsed}s) — uploading to BigQuery...")
-    refresh_data = load_json(REFRESH_DATES_FILE)
-    bq.write_refresh_dates(run_id=run_id, refresh=refresh_data)
-    found = sum(1 for v in refresh_data.values() if v.get("last_refresh_date"))
-    print(f"[refresh] ✓ {found} refresh dates → BQ refresh_dates table  ({elapsed}s total)")
+    try:
+        print(f"\n[refresh] ▶ starting provenance refresh date extraction")
+        t0 = time.time()
+        cmd = [
+            "python3", "provenance_refresh_extractor.py",
+            "--csv",    input_csv,
+            "--output", REFRESH_DATES_FILE,
+            "--resume",
+        ]
+        r = subprocess.run(cmd, cwd=BASE_DIR)
+        elapsed = round(time.time() - t0, 1)
+        if r.returncode != 0:
+            print(f"[refresh] ✗ extractor failed (exit {r.returncode}) — skipping BQ upload")
+            return
+        print(f"[refresh] ✓ extraction done ({elapsed}s) — uploading to BigQuery...")
+        refresh_data = load_json(REFRESH_DATES_FILE)
+        bq.write_refresh_dates(run_id=run_id, refresh=refresh_data)
+        found = sum(1 for v in refresh_data.values() if v.get("last_refresh_date"))
+        print(f"[refresh] ✓ {found} refresh dates → BQ refresh_dates table  ({elapsed}s total)")
+    except Exception as e:
+        print(f"[refresh] ✗ unexpected error in refresh thread: {e}")
 
 
 def main():
@@ -306,16 +309,16 @@ def main():
         _write_filtered_csv(obs_datasets, OBS_INPUT_CSV)
         obs_csv = OBS_INPUT_CSV
     else:
-        raise RuntimeError("No known-working obs datasets found in BQ or local phase4 results. "
-                           "Run the full pipeline at least once first.")
+        obs_csv = input_f   # absolute last resort — should never reach here
+        print(f"  [pipeline] ⚠ no scoped obs input found, falling back to {os.path.basename(obs_csv)}")
 
     refresh_datasets = bq.get_successful_refresh_datasets() or _local_refresh_datasets()
     if refresh_datasets:
         _write_filtered_csv(refresh_datasets, REFRESH_INPUT_CSV)
         refresh_csv = REFRESH_INPUT_CSV
     else:
-        raise RuntimeError("No known-working refresh datasets found in BQ or local provenance_refresh_dates.json. "
-                           "Run provenance_refresh_extractor.py at least once first.")
+        refresh_csv = input_f
+        print(f"  [pipeline] ⚠ no scoped refresh input found, falling back to {os.path.basename(refresh_csv)}")
 
     # ── Phase 5 (refresh dates) — starts immediately, runs in parallel ─────────
     refresh_thread = threading.Thread(

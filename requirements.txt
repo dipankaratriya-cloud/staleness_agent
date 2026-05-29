@@ -2,6 +2,8 @@
 python-dotenv
 requests
 playwright
+aiohttp
+beautifulsoup4
 openpyxl
 pyarrow
 groq

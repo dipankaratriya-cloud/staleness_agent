@@ -17,13 +17,17 @@ import json
 import os
 import subprocess
 import sys
+import threading
 import time
 from datetime import datetime, date, timezone
 
 import bq
 import gcs
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR          = os.path.dirname(os.path.abspath(__file__))
+REFRESH_DATES_FILE = os.path.join(BASE_DIR, "provenance_refresh_dates.json")
+OBS_INPUT_CSV      = os.path.join(BASE_DIR, "obs_input.csv")
+REFRESH_INPUT_CSV  = os.path.join(BASE_DIR, "refresh_input.csv")
 
 
 def run_phase(label, cmd) -> float:
@@ -110,58 +114,86 @@ def staleness_label(freshness_days: int | None) -> str:
 
 
 def compute_delta(run_id: str, phase23: dict, phase4: dict,
-                  prev_phase4: dict | None,
+                  refresh_dates: dict,
+                  prev_results: dict,
                   phase_timings: dict | None = None) -> list[dict]:
-    """Compute delta metrics for every successfully processed dataset."""
+    """Compute delta metrics for every dataset with an obs date OR a refresh date.
+
+    prev_results: {dataset_id: {last_obs_date, last_refresh_date, row_count_current}}
+                  from bq.get_previous_results() — empty dict on first run.
+    refresh_dates: {dataset_id: {last_refresh_date, ...}}
+                   from provenance_refresh_dates.json.
+    """
     today = date.today()
     today_days = (today - date(1970, 1, 1)).days
     phase_timings = phase_timings or {}
+
+    # Union of all dataset_ids that have at least one date signal
+    all_ids = (
+        {did for did, p4 in phase4.items()
+         if p4.get("last_obs_date") not in (None, "not_possible")}
+        |
+        {did for did, rd in refresh_dates.items()
+         if rd.get("last_refresh_date")}
+    )
+
     rows = []
-
-    for dataset_id, p4 in phase4.items():
-        if p4.get("last_obs_date") in (None, "not_possible"):
-            continue
-
+    for dataset_id in all_ids:
+        p4  = phase4.get(dataset_id, {})
         p23 = phase23.get(dataset_id, {})
+        rd  = refresh_dates.get(dataset_id, {})
+
+        # Match against datcom_import_list: try dataset_id first, fall back to URL
+        source_url = p4.get("source_url") or rd.get("url") or p23.get("url", "")
+        prev = (prev_results["by_id"].get(dataset_id)
+                or prev_results["by_url"].get(source_url)
+                or {})
+
+        # ── Obs date ──────────────────────────────────────────────────────────
+        curr_obs      = p4.get("last_obs_date") if p4.get("last_obs_date") != "not_possible" else None
+        prev_obs      = prev.get("last_obs_date")
+        curr_obs_days = parse_date_to_days(curr_obs)
+        prev_obs_days = parse_date_to_days(prev_obs)
+        obs_delta     = (curr_obs_days - prev_obs_days) if (curr_obs_days and prev_obs_days) else None
+        freshness     = (today_days - curr_obs_days) if curr_obs_days else None
+
+        # ── Refresh date ──────────────────────────────────────────────────────
+        curr_refresh      = rd.get("last_refresh_date")
+        prev_refresh      = prev.get("last_refresh_date")
+        curr_refresh_days = parse_date_to_days(curr_refresh)
+        prev_refresh_days = parse_date_to_days(prev_refresh)
+        refresh_delta     = (curr_refresh_days - prev_refresh_days) \
+                            if (curr_refresh_days and prev_refresh_days) else None
+
+        # ── File / row metrics (only for datasets with downloaded files) ──────
         filepath  = p23.get("file")
         file_size = os.path.getsize(filepath) if filepath and os.path.exists(filepath) else None
         row_count_current = count_rows(filepath)
+        prev_row_count    = prev.get("row_count_current")
 
-        # Previous run data
-        prev = (prev_phase4 or {}).get(dataset_id, {})
-        prev_date_str = prev.get("last_obs_date")
-        prev_row_count = prev.get("row_count_current")
-
-        # Date delta
-        curr_days = parse_date_to_days(p4.get("last_obs_date"))
-        prev_days = parse_date_to_days(prev_date_str)
-        date_delta = (curr_days - prev_days) if (curr_days and prev_days) else None
-
-        # Freshness = days from last observation date to today
-        freshness = (today_days - curr_days) if curr_days else None
-
-        # Row delta
-        row_additions = None
-        row_deletions = None
+        row_additions = row_deletions = None
         if row_count_current is not None and prev_row_count is not None:
             diff = row_count_current - prev_row_count
             row_additions = max(0, diff)
             row_deletions = max(0, -diff)
 
-        # File format from phase23
         file_format = p23.get("file_format", "")
         if not file_format and filepath:
             file_format = os.path.splitext(filepath)[1].lstrip(".").lower()
 
         rows.append({
             "dataset_id":              dataset_id,
-            "source_url":              p4.get("source_url", p23.get("url", "")),
-            # Date metrics
-            "last_obs_date":           p4.get("last_obs_date"),
-            "prev_last_obs_date":      prev_date_str,
-            "date_delta_days":         date_delta,
+            "source_url":              p4.get("source_url") or rd.get("url") or p23.get("url", ""),
+            # Obs date metrics
+            "last_obs_date":           curr_obs,
+            "prev_last_obs_date":      prev_obs,
+            "date_delta_days":         obs_delta,
             "data_freshness_days":     freshness,
             "staleness_label":         staleness_label(freshness),
+            # Refresh date metrics
+            "last_refresh_date":       curr_refresh,
+            "prev_last_refresh_date":  prev_refresh,
+            "refresh_date_delta_days": refresh_delta,
             # Row / file metrics
             "row_count_current":       row_count_current,
             "row_count_previous":      prev_row_count,
@@ -174,7 +206,7 @@ def compute_delta(run_id: str, phase23: dict, phase4: dict,
             "download_time_sec":       p23.get("download_time_sec"),
             # Extraction metrics
             "extraction_time_sec":     p4.get("extraction_time_sec"),
-            # Phase timing (same for all rows in this run)
+            # Phase timing
             "phase1_time_sec":         phase_timings.get("phase1"),
             "phase23_time_sec":        phase_timings.get("phase23"),
             "phase4_time_sec":         phase_timings.get("phase4"),
@@ -196,6 +228,62 @@ def latest_phase4_file():
     return max(candidates, key=os.path.getmtime) if candidates else None
 
 
+def _write_filtered_csv(datasets: dict[str, str], path: str):
+    """Write a Provenance-style CSV from {dataset_id: source_url}."""
+    import csv as _csv
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        w = _csv.DictWriter(f, fieldnames=["id", "provenance_url"])
+        w.writeheader()
+        for did, url in datasets.items():
+            w.writerow({"id": did, "provenance_url": url})
+    print(f"  [pipeline] filtered input → {os.path.basename(path)}  ({len(datasets)} datasets)")
+
+
+def _local_obs_datasets() -> dict[str, str]:
+    """Build {dataset_id: url} from latest local phase4_results — datasets with a known obs date."""
+    p4_path = latest_phase4_file()
+    if not p4_path:
+        return {}
+    p4 = load_json(p4_path)
+    return {
+        did: v["source_url"]
+        for did, v in p4.items()
+        if v.get("last_obs_date") not in (None, "not_possible") and v.get("source_url")
+    }
+
+
+def _local_refresh_datasets() -> dict[str, str]:
+    """Build {dataset_id: url} from local provenance_refresh_dates.json — URLs with a known refresh date."""
+    rd = load_json(REFRESH_DATES_FILE)
+    return {
+        did: v["url"]
+        for did, v in rd.items()
+        if v.get("last_refresh_date") and v.get("url")
+    }
+
+
+def _run_refresh_pipeline(run_id: str, input_csv: str, resume: bool):
+    """Runs in a background thread: extract refresh dates → upload to BQ."""
+    print(f"\n[refresh] ▶ starting provenance refresh date extraction")
+    t0 = time.time()
+    cmd = [
+        "python3", "provenance_refresh_extractor.py",
+        "--csv",    input_csv,
+        "--output", REFRESH_DATES_FILE,
+        "--resume",
+    ]
+    r = subprocess.run(cmd, cwd=BASE_DIR)
+    elapsed = round(time.time() - t0, 1)
+    if r.returncode != 0:
+        print(f"[refresh] ✗ extractor failed (exit {r.returncode}) — skipping BQ upload")
+        return
+    print(f"[refresh] ✓ extraction done ({elapsed}s) — uploading to BigQuery...")
+    refresh_data = load_json(REFRESH_DATES_FILE)
+    bq.write_refresh_dates(run_id=run_id, refresh=refresh_data)
+    found = sum(1 for v in refresh_data.values() if v.get("last_refresh_date"))
+    print(f"[refresh] ✓ {found} refresh dates → BQ refresh_dates table  ({elapsed}s total)")
+
+
 def main():
     run_id      = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     workers     = os.environ.get("WORKERS", "4")
@@ -210,8 +298,37 @@ def main():
     # ── Ensure BQ tables exist ─────────────────────────────────────────────────
     bq.ensure_tables()
 
+    # ── Build scoped inputs: BQ first, fall back to local result files ──────────
+    print(f"\n[pipeline] resolving scoped inputs...")
+
+    obs_datasets = bq.get_successful_obs_datasets() or _local_obs_datasets()
+    if obs_datasets:
+        _write_filtered_csv(obs_datasets, OBS_INPUT_CSV)
+        obs_csv = OBS_INPUT_CSV
+    else:
+        raise RuntimeError("No known-working obs datasets found in BQ or local phase4 results. "
+                           "Run the full pipeline at least once first.")
+
+    refresh_datasets = bq.get_successful_refresh_datasets() or _local_refresh_datasets()
+    if refresh_datasets:
+        _write_filtered_csv(refresh_datasets, REFRESH_INPUT_CSV)
+        refresh_csv = REFRESH_INPUT_CSV
+    else:
+        raise RuntimeError("No known-working refresh datasets found in BQ or local provenance_refresh_dates.json. "
+                           "Run provenance_refresh_extractor.py at least once first.")
+
+    # ── Phase 5 (refresh dates) — starts immediately, runs in parallel ─────────
+    refresh_thread = threading.Thread(
+        target=_run_refresh_pipeline,
+        args=(run_id, refresh_csv, resume),
+        daemon=True,
+        name="refresh-dates",
+    )
+    refresh_thread.start()
+    print(f"[pipeline] ↗ refresh pipeline started in background  ({len(refresh_datasets) or 'all'} datasets)")
+
     # ── Phase 1 ───────────────────────────────────────────────────────────────
-    cmd = ["python3", "run_phase1.py", input_f, "--workers", workers]
+    cmd = ["python3", "run_phase1.py", obs_csv, "--workers", workers]
     if resume:
         cmd.append("--resume")
     phase1_time = run_phase("Phase 1 — URL → repo match", cmd)
@@ -261,24 +378,28 @@ def main():
     bq.write_phase4(run_id=run_id, phase4=phase4_data)
     print(f"[pipeline] ✓ Phase 4 → BigQuery done")
 
-    # ── Fetch previous run from GCS and compute delta metrics ─────────────────
-    total_time = round(time.time() - pipeline_t0, 1)
+    # ── Wait for refresh pipeline before computing delta ──────────────────────
+    if refresh_thread.is_alive():
+        print(f"\n[pipeline] ⏳ waiting for refresh date extraction before delta...")
+        refresh_thread.join()
+    refresh_data = load_json(REFRESH_DATES_FILE)
+
+    # ── Fetch previous run from BQ and compute delta metrics ──────────────────
     phase_timings = {
         "phase1":  phase1_time,
         "phase23": phase23_time,
         "phase4":  phase4_time,
-        "total":   total_time,
+        "total":   round(time.time() - pipeline_t0, 1),
     }
 
-    print(f"\n[pipeline] computing delta metrics vs previous run...")
-    try:
-        prev_phase4 = gcs.get_previous_run_results(run_id)
-    except Exception as e:
-        print(f"  [gcs] could not fetch previous run (first run?): {e}")
-        prev_phase4 = None
+    print(f"\n[pipeline] querying datcom_import_list for previous obs + refresh dates...")
+    prev_results = bq.get_datcom_previous()
 
-    delta_rows = compute_delta(run_id, phase23_data, phase4_data, prev_phase4, phase_timings)
-    print(f"[pipeline] computed delta for {len(delta_rows)} datasets")
+    delta_rows = compute_delta(run_id, phase23_data, phase4_data,
+                               refresh_data, prev_results, phase_timings)
+    print(f"[pipeline] computed delta for {len(delta_rows)} datasets "
+          f"({sum(1 for r in delta_rows if r.get('last_obs_date'))} with obs date, "
+          f"{sum(1 for r in delta_rows if r.get('last_refresh_date'))} with refresh date)")
     bq.write_delta(run_id=run_id, delta=delta_rows)
     print(f"[pipeline] ✓ delta_results → BigQuery done")
 
@@ -289,13 +410,15 @@ def main():
     except Exception as e:
         print(f"  [gcs] artifact upload skipped: {e}")
 
+    total_time = round(time.time() - pipeline_t0, 1)
     print(f"\n[pipeline] ✅ complete — run_id: {run_id}  total_time: {total_time}s")
     print(f"  Phase timings:  P1={phase1_time}s  P2+3={phase23_time}s  P4={phase4_time}s")
     print(f"  BigQuery tables:")
     print(f"    {bq.PROJECT}.{bq.DATASET}.phase1_results")
     print(f"    {bq.PROJECT}.{bq.DATASET}.phase23_results")
     print(f"    {bq.PROJECT}.{bq.DATASET}.phase4_results")
-    print(f"    {bq.PROJECT}.{bq.DATASET}.delta_results  ← full report")
+    print(f"    {bq.PROJECT}.{bq.DATASET}.delta_results    ← full report")
+    print(f"    {bq.PROJECT}.{bq.DATASET}.refresh_dates    ← provenance refresh dates")
 
 
 if __name__ == "__main__":

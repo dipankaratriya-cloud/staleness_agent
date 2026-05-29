@@ -173,6 +173,39 @@ def save_json(path: str, data: dict):
         json.dump(data, f, indent=2)
 
 
+REFRESH_DATES_FILE = os.path.join(BASE_DIR, "provenance_refresh_dates.json")
+
+_TIER_CONFIDENCE = {1: "high", 2: "high", 3: "medium", 4: "medium", 5: "medium"}
+
+
+def _parse_year(s: str | None) -> int | None:
+    if not s:
+        return None
+    m = re.search(r"(20\d{2}|19\d{2})", str(s))
+    return int(m.group(1)) if m else None
+
+
+def merge_refresh_dates(results: dict) -> dict:
+    """Add last_refresh_date + accuracy fields to each result entry in-place."""
+    if not os.path.exists(REFRESH_DATES_FILE):
+        return results
+    with open(REFRESH_DATES_FILE) as f:
+        refresh = json.load(f)
+    for did, entry in results.items():
+        rd = refresh.get(did, {})
+        entry["last_refresh_date"]   = rd.get("last_refresh_date")
+        entry["refresh_date_source"] = rd.get("date_source")
+        entry["refresh_confidence"]  = _TIER_CONFIDENCE.get(rd.get("tier_used"), None)
+        # Consistency check: obs date should not be newer than site refresh date
+        obs_yr     = _parse_year(entry.get("last_obs_date"))
+        refresh_yr = _parse_year(rd.get("last_refresh_date"))
+        if obs_yr and refresh_yr:
+            entry["obs_refresh_consistent"] = obs_yr <= refresh_yr
+        else:
+            entry["obs_refresh_consistent"] = None
+    return results
+
+
 def write_summary(results_dir: str, results: dict):
     total = len(results)
     extracted = sum(1 for r in results.values()
@@ -180,6 +213,10 @@ def write_summary(results_dir: str, results: dict):
     failed = total - extracted
     correct = sum(1 for r in results.values() if r.get("match") is True)
     wrong   = sum(1 for r in results.values() if r.get("match") is False)
+
+    with_refresh   = sum(1 for r in results.values() if r.get("last_refresh_date"))
+    inconsistent   = [did for did, r in results.items()
+                      if r.get("obs_refresh_consistent") is False]
 
     summary = {
         "generated_at": datetime.now().isoformat(),
@@ -189,6 +226,9 @@ def write_summary(results_dir: str, results: dict):
         "correct_vs_ground_truth": correct,
         "wrong_vs_ground_truth": wrong,
         "success_rate": f"{extracted/total*100:.1f}%" if total else "0%",
+        "with_refresh_date": with_refresh,
+        "obs_refresh_inconsistent": len(inconsistent),
+        "inconsistent_datasets": inconsistent,
     }
     save_json(os.path.join(results_dir, "summary.json"), summary)
     return summary
@@ -327,6 +367,7 @@ def main():
                     "run_at": datetime.now().isoformat(),
                 }
 
+    merge_refresh_dates(all_results)
     save_json(os.path.join(results_dir, "phase4_results.json"), all_results)
     summary = write_summary(results_dir, all_results)
 
@@ -338,6 +379,11 @@ def main():
     if summary["correct_vs_ground_truth"] or summary["wrong_vs_ground_truth"]:
         print(f"  vs ground truth: {summary['correct_vs_ground_truth']} correct"
               f" / {summary['wrong_vs_ground_truth']} wrong")
+    if summary["with_refresh_date"]:
+        print(f"  Refresh dates  : {summary['with_refresh_date']} datasets")
+    if summary["obs_refresh_inconsistent"]:
+        print(f"  ⚠ Inconsistent : {summary['obs_refresh_inconsistent']} "
+              f"(obs_date > refresh_date) → {summary['inconsistent_datasets'][:3]}")
     print(f"  Output         : {os.path.relpath(results_dir, BASE_DIR)}/phase4_results.json")
     print(f"                   {os.path.relpath(results_dir, BASE_DIR)}/summary.json")
 

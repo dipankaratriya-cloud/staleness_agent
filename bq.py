@@ -4,9 +4,15 @@ import os
 from datetime import date
 from google.cloud import bigquery
 
-PROJECT  = os.environ.get("GCP_PROJECT", "your-gcp-project")
-DATASET  = os.environ.get("BQ_DATASET", "staleness")
-_client  = None
+PROJECT      = os.environ.get("GCP_PROJECT", "datcom-infosys-dev")
+DATASET      = os.environ.get("BQ_DATASET",  "staleness")
+# Full path to the data-engineering team's import list table in datcom-store.
+# Set DATCOM_DATASET to the BQ dataset name inside datcom-store that contains
+# datcom_import_list (e.g. "dc", "imports", "datacommons" — check with your DE team).
+_DATCOM_DS   = os.environ.get("DATCOM_DATASET", "dc_kg_latest")
+DATCOM_TABLE = os.environ.get("DATCOM_IMPORT_TABLE",
+                               f"datcom-store.{_DATCOM_DS}.datcom_import_list")
+_client      = None
 
 
 def _bq():
@@ -62,6 +68,16 @@ def ensure_tables():
             bigquery.SchemaField("extraction_time_sec",  "FLOAT64"),
         ],
         # ── Full report table ─────────────────────────────────────────────────
+        "refresh_dates": [
+            bigquery.SchemaField("run_id",             "STRING"),
+            bigquery.SchemaField("run_date",           "DATE"),
+            bigquery.SchemaField("dataset_id",         "STRING"),
+            bigquery.SchemaField("provenance_url",     "STRING"),
+            bigquery.SchemaField("last_refresh_date",  "STRING"),
+            bigquery.SchemaField("date_source",        "STRING"),
+            bigquery.SchemaField("tier_used",          "INT64"),
+            bigquery.SchemaField("refresh_confidence", "STRING"),
+        ],
         "delta_results": [
             bigquery.SchemaField("run_id",                 "STRING"),
             bigquery.SchemaField("run_date",               "DATE"),
@@ -73,6 +89,10 @@ def ensure_tables():
             bigquery.SchemaField("date_delta_days",        "INT64"),
             bigquery.SchemaField("data_freshness_days",    "INT64"),
             bigquery.SchemaField("staleness_label",        "STRING"),   # Fresh/Recent/Stale/Very Stale
+            # ── Refresh date metrics ──────────────────────────────────────────
+            bigquery.SchemaField("last_refresh_date",      "STRING"),
+            bigquery.SchemaField("prev_last_refresh_date", "STRING"),
+            bigquery.SchemaField("refresh_date_delta_days","INT64"),
             # ── Row / file metrics ────────────────────────────────────────────
             bigquery.SchemaField("row_count_current",      "INT64"),
             bigquery.SchemaField("row_count_previous",     "INT64"),
@@ -191,11 +211,15 @@ def write_delta(run_id: str, delta: list[dict]):
             "dataset_id":              row.get("dataset_id", ""),
             "source_url":              row.get("source_url", ""),
             # Date metrics
-            "last_obs_date":           row.get("last_obs_date"),
-            "prev_last_obs_date":      row.get("prev_last_obs_date"),
-            "date_delta_days":         row.get("date_delta_days"),
-            "data_freshness_days":     row.get("data_freshness_days"),
-            "staleness_label":         row.get("staleness_label"),
+            "last_obs_date":            row.get("last_obs_date"),
+            "prev_last_obs_date":       row.get("prev_last_obs_date"),
+            "date_delta_days":          row.get("date_delta_days"),
+            "data_freshness_days":      row.get("data_freshness_days"),
+            "staleness_label":          row.get("staleness_label"),
+            # Refresh date metrics
+            "last_refresh_date":        row.get("last_refresh_date"),
+            "prev_last_refresh_date":   row.get("prev_last_refresh_date"),
+            "refresh_date_delta_days":  row.get("refresh_date_delta_days"),
             # Row / file metrics
             "row_count_current":       row.get("row_count_current"),
             "row_count_previous":      row.get("row_count_previous"),
@@ -215,6 +239,133 @@ def write_delta(run_id: str, delta: list[dict]):
             "total_pipeline_time_sec": row.get("total_pipeline_time_sec"),
         }
         for row in delta
+    ])
+
+
+def get_datcom_previous() -> dict:
+    """Query datcom_import_list for the latest obs + refresh date per dataset.
+
+    Returns two lookup maps so compute_delta can match by whichever key works:
+      {
+        "by_id":  {dataset_id:    {last_obs_date, last_refresh_date}},
+        "by_url": {provenance_url: {last_obs_date, last_refresh_date}},
+      }
+
+    Uses QUALIFY ROW_NUMBER() so it's safe whether the table has one row or
+    many rows per dataset — always picks the most recent.
+    Cross-project query: datcom-store → runs fine as long as the service
+    account for datcom-infosys-dev has BigQuery Data Viewer on datcom-store.
+    """
+    query = f"""
+        SELECT
+            dataset_id,
+            provenance_url,
+            latestObservationDate,
+            lastDataRefreshDate
+        FROM `{DATCOM_TABLE}`
+        QUALIFY ROW_NUMBER() OVER (
+            PARTITION BY dataset_id
+            ORDER BY latestObservationDate DESC NULLS LAST
+        ) = 1
+    """
+    by_id  = {}
+    by_url = {}
+    try:
+        for row in _bq().query(query).result():
+            entry = {
+                "last_obs_date":     row.latestObservationDate,
+                "last_refresh_date": row.lastDataRefreshDate,
+            }
+            if row.dataset_id:
+                by_id[row.dataset_id] = entry
+            if row.provenance_url:
+                by_url[row.provenance_url] = entry
+        print(f"  [bq] datcom_import_list: {len(by_id)} datasets loaded for comparison")
+    except Exception as e:
+        print(f"  [bq] get_datcom_previous failed — check DATCOM_DATASET env var: {e}")
+    return {"by_id": by_id, "by_url": by_url}
+
+
+def get_successful_obs_datasets() -> dict[str, str]:
+    """Return {dataset_id: source_url} for datasets that have a confirmed obs date.
+    Drawn from the most recent row per dataset in delta_results.
+    Empty dict on first run or if BQ is unreachable.
+    """
+    query = f"""
+        SELECT dataset_id, source_url
+        FROM `{_table("delta_results")}`
+        WHERE last_obs_date IS NOT NULL
+        QUALIFY ROW_NUMBER() OVER (PARTITION BY dataset_id ORDER BY run_date DESC) = 1
+    """
+    try:
+        return {row.dataset_id: row.source_url for row in _bq().query(query).result()}
+    except Exception as e:
+        print(f"  [bq] get_successful_obs_datasets failed: {e}")
+        return {}
+
+
+def get_successful_refresh_datasets() -> dict[str, str]:
+    """Return {dataset_id: source_url} for datasets that have a confirmed refresh date.
+    Drawn from the most recent row per dataset in delta_results.
+    Empty dict on first run or if BQ is unreachable.
+    """
+    query = f"""
+        SELECT dataset_id, source_url
+        FROM `{_table("delta_results")}`
+        WHERE last_refresh_date IS NOT NULL
+        QUALIFY ROW_NUMBER() OVER (PARTITION BY dataset_id ORDER BY run_date DESC) = 1
+    """
+    try:
+        return {row.dataset_id: row.source_url for row in _bq().query(query).result()}
+    except Exception as e:
+        print(f"  [bq] get_successful_refresh_datasets failed: {e}")
+        return {}
+
+
+def get_previous_results() -> dict:
+    """Query delta_results for the most recent row per dataset_id.
+    Returns {dataset_id: {last_obs_date, last_refresh_date, row_count_current}}.
+    """
+    query = f"""
+        SELECT
+            dataset_id,
+            last_obs_date,
+            last_refresh_date,
+            row_count_current
+        FROM `{_table("delta_results")}`
+        QUALIFY ROW_NUMBER() OVER (PARTITION BY dataset_id ORDER BY run_date DESC) = 1
+    """
+    try:
+        rows = list(_bq().query(query).result())
+        return {
+            row.dataset_id: {
+                "last_obs_date":      row.last_obs_date,
+                "last_refresh_date":  row.last_refresh_date,
+                "row_count_current":  row.row_count_current,
+            }
+            for row in rows
+        }
+    except Exception as e:
+        print(f"  [bq] get_previous_results failed (first run?): {e}")
+        return {}
+
+
+def write_refresh_dates(run_id: str, refresh: dict):
+    today = str(date.today())
+    tier_confidence = {1: "high", 2: "high", 3: "medium", 4: "medium", 5: "medium"}
+    _insert("refresh_dates", [
+        {
+            "run_id":             run_id,
+            "run_date":           today,
+            "dataset_id":         k,
+            "provenance_url":     v.get("url", ""),
+            "last_refresh_date":  v.get("last_refresh_date"),
+            "date_source":        v.get("date_source"),
+            "tier_used":          v.get("tier_used"),
+            "refresh_confidence": tier_confidence.get(v.get("tier_used")),
+        }
+        for k, v in refresh.items()
+        if v.get("last_refresh_date")   # only upload rows where we found a date
     ])
 
 

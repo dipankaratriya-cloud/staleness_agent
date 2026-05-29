@@ -105,8 +105,19 @@ def main():
         cmd.append("--resume")
     run_phase("Phase 4 — observation date extraction", cmd)
 
+    # ── Phase 5: provenance URL → last refresh date ───────────────────────────
+    refresh_out = os.path.join(BASE_DIR, "provenance_refresh_dates.json")
+    cmd = [
+        "python3", "provenance_refresh_extractor.py",
+        "--csv",    os.path.join(BASE_DIR, "pipeline_input.csv"),
+        "--output", refresh_out,
+        "--resume",   # never re-fetch URLs already resolved
+    ]
+    run_phase("Phase 5 — provenance refresh date extraction", cmd)
+
     print(f"\n[pipeline] ✅ all phases complete — {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"[pipeline] results → results/<timestamp>/phase4_results.json")
+    print(f"[pipeline] refresh → provenance_refresh_dates.json")
 
 
 if __name__ == "__main__":
